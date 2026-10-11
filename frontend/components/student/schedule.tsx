@@ -19,7 +19,6 @@ export function Schedule() {
         </div>
 
         <motion.div
-          whileHover={{ scale: 1.01 }}
           transition={{ type: "spring", stiffness: 300, damping: 24 }}
           className="p-4 rounded-xl bg-[#0d5c52] text-white flex flex-col gap-4 relative overflow-hidden shadow-md"
         >
