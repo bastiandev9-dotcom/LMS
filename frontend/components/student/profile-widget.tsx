@@ -33,7 +33,6 @@ export function ProfileWidget() {
             >
               <User className="size-8" />
             </motion.div>
-            <PulseDot className="bg-[#14b8a6] ring-2 ring-white" wrapClassName="absolute bottom-0 right-0" size="size-4" />
           </motion.div>
           <FadeIn delay={0.1} className="flex flex-col min-w-0">
             <h3 className="text-[15px] font-semibold text-[#071f1c] truncate">
