@@ -20,7 +20,7 @@ export default function MuridLayout({
       <MuridSidebar />
       <div className="min-h-screen flex flex-col relative z-10 pl-64">
         <MuridTopbar />
-        <main className="w-full flex-1 pt-20 px-8 pb-10">{children}</main>
+        <main className="w-full flex-1 pt-28 px-8 pb-10">{children}</main>
       </div>
     </div>
   );
