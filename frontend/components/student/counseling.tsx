@@ -71,7 +71,7 @@ export function Counseling() {
             <div className="flex items-center bg-[#edf7f4] p-1 rounded-full text-[11px] font-semibold border border-[#cee8e1]/50">
               <motion.button
                 type="button"
-                whileHover={{ scale: 1.02 }}
+                // whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setMode("video")}
                 className={`px-4 py-1 rounded-full shadow-sm font-semibold flex items-center gap-1 transition-colors ${
