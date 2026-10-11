@@ -597,10 +597,11 @@ export function StudentSettings() {
                     </div>
                     <select
                       aria-label="Ukuran konten modul"
+                      defaultValue="Nyaman (115%)"
                       className="px-2 py-1 rounded bg-[#e2f2ee] text-[#071f1c] text-[12px] font-semibold outline-none cursor-pointer"
                     >
                       <option>Normal (100%)</option>
-                      <option selected>Nyaman (115%)</option>
+                      <option>Nyaman (115%)</option>
                       <option>Besar (125%)</option>
                     </select>
                   </div>
