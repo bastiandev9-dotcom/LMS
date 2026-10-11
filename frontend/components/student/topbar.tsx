@@ -33,7 +33,6 @@ export function MuridTopbar() {
           <motion.button
             type="button"
             title="Notifications"
-            whileHover={{ scale: 1.08 }}
             whileTap={{ scale: 0.94 }}
             className="relative w-10 h-10 rounded-full bg-[#f2f9f7] flex items-center justify-center text-[#536360] hover:bg-[#edf7f4] transition-colors"
           >
