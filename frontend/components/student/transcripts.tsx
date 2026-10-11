@@ -390,7 +390,6 @@ export function StudentTranscripts() {
                   )
                 }
                 className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#0d5c52] text-white hover:bg-[#00433b] text-[12px] font-semibold transition-colors shadow-sm"
-                whileHover={{ scale: 1.04 }}
                 whileTap={{ scale: 0.96 }}
               >
                 <Download className="size-4" />
