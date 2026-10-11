@@ -129,7 +129,6 @@ export function StudentCounseling() {
                 type="button"
                 onClick={() => setShowTicketsModal(true)}
                 className="flex items-center justify-center gap-2 px-6 py-3 bg-white text-[#0d5c52] text-[14px] font-semibold rounded-xl shadow-sm border border-[#cee8e1]/60 hover:bg-[#dff9f2] transition-all"
-                whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
               >
                 <CalendarClock className="size-5" />
