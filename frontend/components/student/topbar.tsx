@@ -48,7 +48,6 @@ export function MuridTopbar() {
             <Sparkles className="size-4" />
           </motion.button>
           <motion.div
-            whileHover={{ scale: 1.08 }}
             className="w-9 h-9 rounded-full bg-[#0d5c52] flex items-center justify-center shadow-sm"
           >
             <User className="size-[18px] text-white" />
