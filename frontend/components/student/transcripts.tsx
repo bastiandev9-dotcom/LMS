@@ -18,7 +18,8 @@ import {
   TrendingUp,
   Trophy,
 } from "lucide-react";
-import { FadeIn, SlideIn, StaggerChildren, StaggerItem } from "@/components/ui/animations";
+import { motion } from "framer-motion";
+import { CountUp, FadeIn, SlideIn, StaggerChildren, StaggerItem } from "@/components/ui/animations";
 
 type Category = "wajib" | "pilihan" | "lokal";
 
@@ -372,15 +373,17 @@ export function StudentTranscripts() {
                 </select>
                 <ChevronRight className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 rotate-90 size-4 text-[#6f7976]" />
               </div>
-              <button
+              <motion.button
                 type="button"
                 onClick={() => window.print()}
                 className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#d4eee7] text-[#0d5c52] hover:bg-[#cee8e1] text-[12px] font-semibold transition-colors shadow-sm"
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.96 }}
               >
                 <Printer className="size-4" />
                 Cetak Rapor Digital
-              </button>
-              <button
+              </motion.button>
+              <motion.button
                 type="button"
                 onClick={() =>
                   alert(
@@ -388,18 +391,25 @@ export function StudentTranscripts() {
                   )
                 }
                 className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#0d5c52] text-white hover:bg-[#00433b] text-[12px] font-semibold transition-colors shadow-sm"
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.96 }}
               >
                 <Download className="size-4" />
                 Unduh Transkrip Resmi (.PDF)
-              </button>
+              </motion.button>
             </div>
           </div>
         </div>
 
         {/* 2. KPI Summary Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <StaggerChildren staggerDelay={0.1} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* IPK Kumulatif */}
-          <div className="p-4 rounded-xl bg-white border border-[#cee8e1]/60 shadow-[0_2px_8px_-2px_rgba(13,92,82,0.05)] flex flex-col justify-between gap-2">
+          <StaggerItem>
+            <motion.div
+              className="p-4 rounded-xl bg-white border border-[#cee8e1]/60 shadow-[0_2px_8px_-2px_rgba(13,92,82,0.05)] flex flex-col justify-between gap-2 h-full"
+              whileHover={{ y: -4, boxShadow: "0 8px 24px -4px rgba(13,92,82,0.14)" }}
+              transition={{ type: "spring", stiffness: 300, damping: 22 }}
+            >
             <div className="flex items-start justify-between">
               <div className="flex flex-col">
                 <span className="text-[11px] text-[#536360] uppercase tracking-wider font-semibold">
@@ -407,7 +417,7 @@ export function StudentTranscripts() {
                 </span>
                 <div className="flex items-baseline gap-1 mt-1">
                   <span className="text-[40px] leading-12 font-extrabold text-[#0d5c52] tracking-tight">
-                    3.88
+                    <CountUp to={3.88} decimals={2} duration={1.4} />
                   </span>
                   <span className="text-[12px] text-[#6f7976]">/ 4.00</span>
                 </div>
@@ -425,10 +435,16 @@ export function StudentTranscripts() {
                 +0.06 pts Sem 4
               </div>
             </div>
-          </div>
+            </motion.div>
+          </StaggerItem>
 
           {/* Beban Belajar */}
-          <div className="p-4 rounded-xl bg-white border border-[#cee8e1]/60 shadow-[0_2px_8px_-2px_rgba(13,92,82,0.05)] flex flex-col justify-between gap-2">
+          <StaggerItem>
+            <motion.div
+              className="p-4 rounded-xl bg-white border border-[#cee8e1]/60 shadow-[0_2px_8px_-2px_rgba(13,92,82,0.05)] flex flex-col justify-between gap-2 h-full"
+              whileHover={{ y: -4, boxShadow: "0 8px 24px -4px rgba(13,92,82,0.14)" }}
+              transition={{ type: "spring", stiffness: 300, damping: 22 }}
+            >
             <div className="flex items-start justify-between">
               <div className="flex flex-col">
                 <span className="text-[11px] text-[#536360] uppercase tracking-wider font-semibold">
@@ -436,7 +452,7 @@ export function StudentTranscripts() {
                 </span>
                 <div className="flex items-baseline gap-1 mt-1">
                   <span className="text-[40px] leading-12 font-extrabold text-[#0d5c52] tracking-tight">
-                    142
+                    <CountUp to={142} duration={1.4} />
                   </span>
                   <span className="text-[14px] text-[#6f7976]">JP / Semester</span>
                 </div>
@@ -451,13 +467,25 @@ export function StudentTranscripts() {
                 <span className="text-[#0d5c52]">44 SKS Terakui</span>
               </div>
               <div className="w-full h-1.5 rounded-full bg-[#d9f3ed]">
-                <div className="h-1.5 rounded-full bg-[#0d5c52] w-full" />
+                <motion.div
+                  className="h-1.5 rounded-full bg-[#0d5c52]"
+                  initial={{ width: 0 }}
+                  whileInView={{ width: "100%" }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.9, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                />
               </div>
             </div>
-          </div>
+            </motion.div>
+          </StaggerItem>
 
           {/* Rata-rata Ujian */}
-          <div className="p-4 rounded-xl bg-white border border-[#cee8e1]/60 shadow-[0_2px_8px_-2px_rgba(13,92,82,0.05)] flex flex-col justify-between gap-2">
+          <StaggerItem>
+            <motion.div
+              className="p-4 rounded-xl bg-white border border-[#cee8e1]/60 shadow-[0_2px_8px_-2px_rgba(13,92,82,0.05)] flex flex-col justify-between gap-2 h-full"
+              whileHover={{ y: -4, boxShadow: "0 8px 24px -4px rgba(13,92,82,0.14)" }}
+              transition={{ type: "spring", stiffness: 300, damping: 22 }}
+            >
             <div className="flex items-start justify-between">
               <div className="flex flex-col">
                 <span className="text-[11px] text-[#536360] uppercase tracking-wider font-semibold">
@@ -465,7 +493,7 @@ export function StudentTranscripts() {
                 </span>
                 <div className="flex items-baseline gap-1 mt-1">
                   <span className="text-[40px] leading-12 font-extrabold text-[#0d5c52] tracking-tight">
-                    91.4
+                    <CountUp to={91.4} decimals={1} duration={1.4} />
                   </span>
                   <span className="text-[12px] text-[#6f7976]">/ 100</span>
                 </div>
@@ -480,10 +508,16 @@ export function StudentTranscripts() {
               </span>
               <span className="text-[#536360] font-normal">Top 2% Angkatan 2025</span>
             </div>
-          </div>
+            </motion.div>
+          </StaggerItem>
 
           {/* Ketercapaian CP */}
-          <div className="p-4 rounded-xl bg-white border border-[#cee8e1]/60 shadow-[0_2px_8px_-2px_rgba(13,92,82,0.05)] flex flex-col justify-between gap-2">
+          <StaggerItem>
+            <motion.div
+              className="p-4 rounded-xl bg-white border border-[#cee8e1]/60 shadow-[0_2px_8px_-2px_rgba(13,92,82,0.05)] flex flex-col justify-between gap-2 h-full"
+              whileHover={{ y: -4, boxShadow: "0 8px 24px -4px rgba(13,92,82,0.14)" }}
+              transition={{ type: "spring", stiffness: 300, damping: 22 }}
+            >
             <div className="flex items-start justify-between">
               <div className="flex flex-col">
                 <span className="text-[11px] text-[#536360] uppercase tracking-wider font-semibold">
@@ -491,7 +525,7 @@ export function StudentTranscripts() {
                 </span>
                 <div className="flex items-baseline gap-1 mt-1">
                   <span className="text-[40px] leading-12 font-extrabold text-[#0d5c52] tracking-tight">
-                    98.2%
+                    <CountUp to={98.2} decimals={1} suffix="%" duration={1.4} />
                   </span>
                 </div>
               </div>
@@ -505,8 +539,9 @@ export function StudentTranscripts() {
               </span>
               <span className="text-[#536360] font-normal">0 Modul Remedial</span>
             </div>
-          </div>
-        </div>
+            </motion.div>
+          </StaggerItem>
+        </StaggerChildren>
 
         {/* 3. Split Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -689,9 +724,13 @@ export function StudentTranscripts() {
               </div>
 
               <div className="p-4 rounded-xl bg-[#dff9f2] flex flex-col gap-4">
-                <div className="flex items-end justify-between gap-2 sm:gap-4 h-48 pt-4 px-2">
+                <StaggerChildren
+                  staggerDelay={0.08}
+                  delayChildren={0.1}
+                  className="flex items-end justify-between gap-2 sm:gap-4 h-48 pt-4 px-2"
+                >
                   {ipsHistory.map((h) => (
-                    <div
+                    <StaggerItem
                       key={h.sem}
                       className="flex-1 flex flex-col items-center gap-2 h-full justify-end group"
                     >
@@ -704,13 +743,17 @@ export function StudentTranscripts() {
                           {h.ipk}
                         </span>
                       )}
-                      <div
-                        className={`w-full max-w-[56px] rounded-t-lg transition-all duration-300 ${
+                      <motion.div
+                        className={`w-full max-w-[56px] rounded-t-lg origin-bottom transition-colors ${
                           h.current
                             ? "bg-[#0d5c52] shadow-sm"
                             : "bg-[#cee8e1] group-hover:bg-[#0d5c52]"
                         }`}
                         style={{ height: h.height }}
+                        initial={{ scaleY: 0 }}
+                        whileInView={{ scaleY: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
                       />
                       <div className="flex flex-col items-center">
                         <span className="text-[11px] font-bold text-[#0d5c52]">{h.sem}</span>
@@ -722,9 +765,9 @@ export function StudentTranscripts() {
                           {h.fase}
                         </span>
                       </div>
-                    </div>
+                    </StaggerItem>
                   ))}
-                </div>
+                </StaggerChildren>
                 <div className="flex items-center justify-between text-[#6f7976] text-[11px] pt-2 border-t border-[#bec9c5]/30">
                   <span>Standar Kelulusan Cumlaude: 3.75+</span>
                   <span>Rerata Paralel Angkatan: 3.42</span>
@@ -829,7 +872,7 @@ export function StudentTranscripts() {
                 </div>
               </div>
 
-              <button
+              <motion.button
                 type="button"
                 onClick={() =>
                   alert(
@@ -837,10 +880,12 @@ export function StudentTranscripts() {
                   )
                 }
                 className="w-full py-2.5 px-4 rounded-lg bg-[#d4eee7] hover:bg-[#cee8e1] text-[#0d5c52] text-[13px] font-semibold transition-colors flex items-center justify-center gap-2 shadow-sm"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
                 <Lock className="size-4" />
                 Unduh Salinan Terlegalisir (.pdf)
-              </button>
+              </motion.button>
             </div>
 
             {/* Pancasila Profile */}
