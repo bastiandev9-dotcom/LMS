@@ -27,7 +27,8 @@ import {
   User,
   X,
 } from "lucide-react";
-import { FadeIn } from "@/components/ui/animations";
+import { motion } from "framer-motion";
+import { FadeIn, StaggerChildren, StaggerItem } from "@/components/ui/animations";
 import { useLogout } from "@/hooks/use-logout";
 
 const tabs = [
@@ -226,18 +227,22 @@ export function StudentSettings() {
             </span>
           </nav>
           <div className="flex items-center gap-2">
-            <button
+            <motion.button
               type="button"
               onClick={handleCancel}
               className="px-4 py-2 rounded-lg bg-[#e2f2ee] text-[#0d5c52] text-[14px] font-semibold hover:bg-[#d4eee7] transition-colors"
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
             >
               Batal
-            </button>
-            <button
+            </motion.button>
+            <motion.button
               type="button"
               onClick={handleSave}
               disabled={saveState !== "idle"}
               className="px-5 py-2 rounded-lg bg-[#0d5c52] text-white text-[14px] font-semibold flex items-center gap-2 shadow-[0_4px_14px_rgba(13,92,82,0.28)] hover:bg-[#00433b] transition-all disabled:opacity-70"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
             >
               {saveState === "saving" ? (
                 <>
@@ -255,7 +260,7 @@ export function StudentSettings() {
                   Simpan Perubahan
                 </>
               )}
-            </button>
+            </motion.button>
           </div>
         </div>
 
@@ -305,23 +310,24 @@ export function StudentSettings() {
         </div>
 
         {/* Tabs */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1">
+        <StaggerChildren staggerDelay={0.06} className="flex items-center gap-2 overflow-x-auto pb-1">
           {tabs.map(({ id, label, icon: Icon }) => (
-            <button
-              key={id}
-              type="button"
-              onClick={() => goTo(id)}
-              className={`px-4 py-2 rounded-lg text-[14px] font-semibold flex items-center gap-2 whitespace-nowrap transition-all ${
-                activeTab === id
-                  ? "bg-[#0d5c52] text-white shadow-[0_4px_14px_rgba(13,92,82,0.28)]"
-                  : "bg-white text-[#536360] border border-[#cee8e1]/60 hover:bg-[#edf7f4] hover:text-[#0d5c52]"
-              }`}
-            >
-              <Icon className="size-4" />
-              {label}
-            </button>
+            <StaggerItem key={id}>
+              <button
+                type="button"
+                onClick={() => goTo(id)}
+                className={`px-4 py-2 rounded-lg text-[14px] font-semibold flex items-center gap-2 whitespace-nowrap transition-all ${
+                  activeTab === id
+                    ? "bg-[#0d5c52] text-white shadow-[0_4px_14px_rgba(13,92,82,0.28)]"
+                    : "bg-white text-[#536360] border border-[#cee8e1]/60 hover:bg-[#edf7f4] hover:text-[#0d5c52]"
+                }`}
+              >
+                <Icon className="size-4" />
+                {label}
+              </button>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerChildren>
 
         {/* Content grid */}
         <form
@@ -511,19 +517,17 @@ export function StudentSettings() {
               flash={flashId === "aitutor"}
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="flex flex-col gap-2">
+                <StaggerChildren staggerDelay={0.06} className="flex flex-col gap-2">
                   <span className="text-[13px] font-semibold text-[#071f1c]">
                     Model Karakter Respons AI
                   </span>
-                  {aiToneOptions.map((opt, i) => (
-                    <label
-                      key={opt.title}
-                      className="flex items-start gap-2 p-3 rounded-lg bg-[#edf7f4] cursor-pointer hover:bg-[#e2f2ee] transition-colors"
-                    >
+                  {aiToneOptions.map((opt) => (
+                    <StaggerItem key={opt.title}>
+                    <label className="flex items-start gap-2 p-3 rounded-lg bg-[#edf7f4] cursor-pointer hover:bg-[#e2f2ee] transition-colors">
                       <input
                         type="radio"
                         name="ai_tone"
-                        defaultChecked={i === 0}
+                        defaultChecked={opt.title === aiToneOptions[0].title}
                         className="mt-1 w-4 h-4 accent-[#0d5c52]"
                       />
                       <div className="flex flex-col">
@@ -531,21 +535,20 @@ export function StudentSettings() {
                         <span className="text-[12px] text-[#536360]">{opt.desc}</span>
                       </div>
                     </label>
+                    </StaggerItem>
                   ))}
-                </div>
-                <div className="flex flex-col gap-2">
+                </StaggerChildren>
+                <StaggerChildren staggerDelay={0.06} delayChildren={0.05} className="flex flex-col gap-2">
                   <span className="text-[13px] font-semibold text-[#071f1c]">
                     Bahasa Utama Penjelasan
                   </span>
-                  {aiLangOptions.map((opt, i) => (
-                    <label
-                      key={opt.title}
-                      className="flex items-start gap-2 p-3 rounded-lg bg-[#edf7f4] cursor-pointer hover:bg-[#e2f2ee] transition-colors"
-                    >
+                  {aiLangOptions.map((opt) => (
+                    <StaggerItem key={opt.title}>
+                    <label className="flex items-start gap-2 p-3 rounded-lg bg-[#edf7f4] cursor-pointer hover:bg-[#e2f2ee] transition-colors">
                       <input
                         type="radio"
                         name="ai_lang"
-                        defaultChecked={i === 0}
+                        defaultChecked={opt.title === aiLangOptions[0].title}
                         className="mt-1 w-4 h-4 accent-[#0d5c52]"
                       />
                       <div className="flex flex-col">
@@ -553,8 +556,9 @@ export function StudentSettings() {
                         <span className="text-[12px] text-[#536360]">{opt.desc}</span>
                       </div>
                     </label>
+                    </StaggerItem>
                   ))}
-                </div>
+                </StaggerChildren>
               </div>
 
               {/* Accessibility */}
@@ -619,10 +623,10 @@ export function StudentSettings() {
               desc="Pengingat berkala tugas dan janji temu bimbingan"
               flash={flashId === "notifikasi"}
             >
-              <div className="flex flex-col gap-2">
+              <StaggerChildren staggerDelay={0.07} className="flex flex-col gap-2">
                 {notificationRows.map((row) => (
+                  <StaggerItem key={row.title}>
                   <div
-                    key={row.title}
                     className="flex items-center justify-between gap-3 p-3 rounded-lg bg-[#edf7f4] hover:bg-[#e2f2ee] transition-colors"
                   >
                     <div className="flex flex-col min-w-0">
@@ -636,16 +640,17 @@ export function StudentSettings() {
                       className="w-5 h-5 accent-[#0d5c52] cursor-pointer flex-shrink-0"
                     />
                   </div>
+                  </StaggerItem>
                 ))}
-              </div>
+              </StaggerChildren>
 
-              <div className="flex flex-col gap-2 pt-1">
+              <StaggerChildren staggerDelay={0.07} delayChildren={0.05} className="flex flex-col gap-2 pt-1">
                 <span className="text-[11px] font-semibold text-[#536360]">
                   KANAL PENGIRIMAN AKTIF
                 </span>
                 {deliveryChannels.map(({ icon: Icon, label }) => (
+                  <StaggerItem key={label}>
                   <label
-                    key={label}
                     className="flex items-center justify-between gap-3 p-3 rounded-lg bg-white border border-[#cee8e1]/60 shadow-[0_2px_8px_-2px_rgba(13,92,82,0.05)] cursor-pointer"
                   >
                     <div className="flex items-center gap-2 min-w-0">
@@ -659,8 +664,9 @@ export function StudentSettings() {
                       className="w-4 h-4 accent-[#0d5c52] cursor-pointer flex-shrink-0"
                     />
                   </label>
+                  </StaggerItem>
                 ))}
-              </div>
+              </StaggerChildren>
             </SectionCard>
 
             <SectionCard
@@ -670,12 +676,10 @@ export function StudentSettings() {
               desc="Integrasi akun nasional Dapodik & otentikasi login"
               flash={flashId === "keamanan"}
             >
-              <div className="flex flex-col gap-2">
+              <StaggerChildren staggerDelay={0.07} className="flex flex-col gap-2">
                 {ssoRows.map(({ icon: Icon, title, badge, desc }) => (
-                  <div
-                    key={title}
-                    className="p-3 rounded-lg bg-[#edf7f4] flex items-center justify-between gap-3"
-                  >
+                  <StaggerItem key={title}>
+                  <div className="p-3 rounded-lg bg-[#edf7f4] flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-0">
                       <span className="w-9 h-9 rounded-lg bg-[#e2f2ee] flex items-center justify-center text-[#0d5c52] flex-shrink-0">
                         <Icon className="size-5" />
@@ -692,7 +696,9 @@ export function StudentSettings() {
                     </div>
                     <CircleCheck className="size-5 text-[#0d5c52] flex-shrink-0" />
                   </div>
+                  </StaggerItem>
                 ))}
+                <StaggerItem>
                 <div className="p-3 rounded-lg bg-[#edf7f4] flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0">
                     <span className="w-9 h-9 rounded-lg bg-[#e2f2ee] flex items-center justify-center text-[#0d5c52] flex-shrink-0">
@@ -714,7 +720,8 @@ export function StudentSettings() {
                     Kelola
                   </button>
                 </div>
-              </div>
+                </StaggerItem>
+              </StaggerChildren>
             </SectionCard>
 
             <SectionCard
@@ -724,12 +731,10 @@ export function StudentSettings() {
               desc="Riwayat login portal SiManis pada perangkat Anda"
               flash={flashId === "perangkat"}
             >
-              <div className="flex flex-col gap-2">
+              <StaggerChildren staggerDelay={0.08} className="flex flex-col gap-2">
                 {devices.map(({ icon: Icon, title, meta, current }) => (
-                  <div
-                    key={title}
-                    className="p-3 rounded-lg bg-[#edf7f4] flex items-center justify-between gap-3"
-                  >
+                  <StaggerItem key={title}>
+                  <div className="p-3 rounded-lg bg-[#edf7f4] flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-0">
                       <Icon
                         className={`size-6 flex-shrink-0 ${current ? "text-[#0d5c52]" : "text-[#536360]"}`}
@@ -756,8 +761,9 @@ export function StudentSettings() {
                       </button>
                     )}
                   </div>
+                  </StaggerItem>
                 ))}
-              </div>
+              </StaggerChildren>
               <button
                 type="button"
                 onClick={handleLogout}
