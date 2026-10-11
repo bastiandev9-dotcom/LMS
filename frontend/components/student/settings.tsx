@@ -241,7 +241,6 @@ export function StudentSettings() {
               onClick={handleSave}
               disabled={saveState !== "idle"}
               className="px-5 py-2 rounded-lg bg-[#0d5c52] text-white text-[14px] font-semibold flex items-center gap-2 shadow-[0_4px_14px_rgba(13,92,82,0.28)] hover:bg-[#00433b] transition-all disabled:opacity-70"
-              whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
             >
               {saveState === "saving" ? (
