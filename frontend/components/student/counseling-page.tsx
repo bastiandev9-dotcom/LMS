@@ -120,7 +120,6 @@ export function StudentCounseling() {
                 type="button"
                 onClick={() => document.getElementById("booking-section")?.scrollIntoView({ behavior: "smooth" })}
                 className="flex items-center justify-center gap-2 px-6 py-3 bg-[#0d5c52] text-white text-[14px] font-semibold rounded-xl shadow-[0_4px_14px_rgba(13,92,82,0.28)] hover:bg-[#00433b] transition-all"
-                whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
               >
                 <PlusCircle className="size-5" />
