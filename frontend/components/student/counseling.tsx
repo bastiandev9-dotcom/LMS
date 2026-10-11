@@ -182,7 +182,6 @@ export function Counseling() {
             </div>
             <motion.button
               type="button"
-              whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               onClick={handleBook}
               className="w-full sm:w-auto px-10 py-2 rounded-full bg-[#0d5c52] text-white hover:bg-[#00433b] text-[13px] font-semibold shadow-[0_4px_16px_rgba(13,92,82,0.25)] transition-colors duration-200"
