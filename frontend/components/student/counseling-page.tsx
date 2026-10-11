@@ -31,7 +31,8 @@ import {
   Video,
   X,
 } from "lucide-react";
-import { FadeIn, SlideIn, StaggerChildren, StaggerItem } from "@/components/ui/animations";
+import { motion } from "framer-motion";
+import { CountUp, FadeIn, SlideIn, StaggerChildren, StaggerItem } from "@/components/ui/animations";
 
 export function StudentCounseling() {
   const [showTicketsModal, setShowTicketsModal] = useState(false);
@@ -115,22 +116,26 @@ export function StudentCounseling() {
             
             {/* Hero Actions */}
             <div className="flex flex-col sm:flex-row lg:flex-col gap-3 w-full lg:w-auto shrink-0">
-              <button
+              <motion.button
                 type="button"
                 onClick={() => document.getElementById("booking-section")?.scrollIntoView({ behavior: "smooth" })}
                 className="flex items-center justify-center gap-2 px-6 py-3 bg-[#0d5c52] text-white text-[14px] font-semibold rounded-xl shadow-[0_4px_14px_rgba(13,92,82,0.28)] hover:bg-[#00433b] transition-all"
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
               >
                 <PlusCircle className="size-5" />
                 Buat Janji Konseling Baru
-              </button>
-              <button
+              </motion.button>
+              <motion.button
                 type="button"
                 onClick={() => setShowTicketsModal(true)}
                 className="flex items-center justify-center gap-2 px-6 py-3 bg-white text-[#0d5c52] text-[14px] font-semibold rounded-xl shadow-sm border border-[#cee8e1]/60 hover:bg-[#dff9f2] transition-all"
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
               >
                 <CalendarClock className="size-5" />
                 Cek Status Tiket / Sesi Aktif
-              </button>
+              </motion.button>
             </div>
           </div>
         </div>
@@ -139,7 +144,11 @@ export function StudentCounseling() {
         <StaggerChildren className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Stat 1 */}
           <StaggerItem>
-            <div className="bg-white p-4 rounded-2xl shadow-[0_2px_8px_-2px_rgba(13,92,82,0.05)] border border-[#cee8e1]/60 flex flex-col justify-between gap-3 relative overflow-hidden group hover:shadow-md transition-all h-full">
+            <motion.div
+              className="bg-white p-4 rounded-2xl shadow-[0_2px_8px_-2px_rgba(13,92,82,0.05)] border border-[#cee8e1]/60 flex flex-col justify-between gap-3 relative overflow-hidden h-full"
+              whileHover={{ y: -4, boxShadow: "0 8px 24px -4px rgba(13,92,82,0.14)" }}
+              transition={{ type: "spring", stiffness: 300, damping: 22 }}
+            >
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-semibold text-[#3f4946] uppercase tracking-wider">Sesi Terlaksana</span>
                 <div className="w-9 h-9 rounded-xl bg-[#dff9f2] flex items-center justify-center text-[#0d5c52]">
@@ -147,19 +156,31 @@ export function StudentCounseling() {
                 </div>
               </div>
               <div className="flex items-baseline gap-1.5">
-                <span className="text-[28px] font-bold text-[#071f1c] leading-none">4</span>
+                <span className="text-[28px] font-bold text-[#071f1c] leading-none">
+                  <CountUp to={4} duration={1.2} />
+                </span>
                 <span className="text-[12px] text-[#3f4946]">Sesi Semester Ini</span>
               </div>
               <div className="w-full bg-[#cee8e1] h-1.5 rounded-full overflow-hidden">
-                <div className="bg-[#0d5c52] h-full rounded-full" style={{ width: "80%" }} />
+                <motion.div
+                  className="bg-[#0d5c52] h-full rounded-full"
+                  initial={{ width: 0 }}
+                  whileInView={{ width: "80%" }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.9, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                />
               </div>
               <span className="text-[11px] font-semibold text-[#006b5f]">Target evaluasi triwulan terpenuhi</span>
-            </div>
+            </motion.div>
           </StaggerItem>
 
           {/* Stat 2 */}
           <StaggerItem>
-            <div className="bg-white p-4 rounded-2xl shadow-[0_2px_8px_-2px_rgba(13,92,82,0.05)] border border-[#cee8e1]/60 flex flex-col justify-between gap-3 relative overflow-hidden group hover:shadow-md transition-all h-full">
+            <motion.div
+              className="bg-white p-4 rounded-2xl shadow-[0_2px_8px_-2px_rgba(13,92,82,0.05)] border border-[#cee8e1]/60 flex flex-col justify-between gap-3 relative overflow-hidden h-full"
+              whileHover={{ y: -4, boxShadow: "0 8px 24px -4px rgba(13,92,82,0.14)" }}
+              transition={{ type: "spring", stiffness: 300, damping: 22 }}
+            >
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-semibold text-[#3f4946] uppercase tracking-wider">Jadwal Terdekat</span>
                 <div className="w-9 h-9 rounded-xl bg-[#6df5e1]/40 flex items-center justify-center text-[#006f64]">
@@ -174,12 +195,16 @@ export function StudentCounseling() {
                 <span className="w-2 h-2 rounded-full bg-[#14b8a6] animate-pulse" />
                 Sesi Dikonfirmasi Guru BK
               </div>
-            </div>
+            </motion.div>
           </StaggerItem>
 
           {/* Stat 3 */}
           <StaggerItem>
-            <div className="bg-white p-4 rounded-2xl shadow-[0_2px_8px_-2px_rgba(13,92,82,0.05)] border border-[#cee8e1]/60 flex flex-col justify-between gap-3 relative overflow-hidden group hover:shadow-md transition-all h-full">
+            <motion.div
+              className="bg-white p-4 rounded-2xl shadow-[0_2px_8px_-2px_rgba(13,92,82,0.05)] border border-[#cee8e1]/60 flex flex-col justify-between gap-3 relative overflow-hidden h-full"
+              whileHover={{ y: -4, boxShadow: "0 8px 24px -4px rgba(13,92,82,0.14)" }}
+              transition={{ type: "spring", stiffness: 300, damping: 22 }}
+            >
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-semibold text-[#3f4946] uppercase tracking-wider">Hak Bimbingan</span>
                 <div className="w-9 h-9 rounded-xl bg-[#d9f3ed] flex items-center justify-center text-[#0d5c52]">
@@ -191,15 +216,25 @@ export function StudentCounseling() {
                 <span className="text-[12px] text-[#3f4946]">/ Tak Terbatas</span>
               </div>
               <div className="w-full bg-[#cee8e1] h-1.5 rounded-full overflow-hidden">
-                <div className="bg-[#14b8a6] h-full rounded-full" style={{ width: "100%" }} />
+                <motion.div
+                  className="bg-[#14b8a6] h-full rounded-full"
+                  initial={{ width: 0 }}
+                  whileInView={{ width: "100%" }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.9, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                />
               </div>
               <span className="text-[11px] font-semibold text-[#3f4946]">Layanan aktif bagi seluruh siswa SMK</span>
-            </div>
+            </motion.div>
           </StaggerItem>
 
           {/* Stat 4 */}
           <StaggerItem>
-            <div className="bg-white p-4 rounded-2xl shadow-[0_2px_8px_-2px_rgba(13,92,82,0.05)] border border-[#cee8e1]/60 flex flex-col justify-between gap-3 relative overflow-hidden group hover:shadow-md transition-all h-full">
+            <motion.div
+              className="bg-white p-4 rounded-2xl shadow-[0_2px_8px_-2px_rgba(13,92,82,0.05)] border border-[#cee8e1]/60 flex flex-col justify-between gap-3 relative overflow-hidden h-full"
+              whileHover={{ y: -4, boxShadow: "0 8px 24px -4px rgba(13,92,82,0.14)" }}
+              transition={{ type: "spring", stiffness: 300, damping: 22 }}
+            >
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-semibold text-[#3f4946] uppercase tracking-wider">Kecocokan Karir</span>
                 <div className="w-9 h-9 rounded-xl bg-[#d4eee7] flex items-center justify-center text-[#0d5c52]">
@@ -207,14 +242,16 @@ export function StudentCounseling() {
                 </div>
               </div>
               <div className="flex items-baseline gap-1.5">
-                <span className="text-[28px] font-bold text-[#0d5c52] leading-none">94%</span>
+                <span className="text-[28px] font-bold text-[#0d5c52] leading-none">
+                  <CountUp to={94} suffix="%" duration={1.2} />
+                </span>
                 <span className="text-[12px] text-[#3f4946]">Informatika &amp; AI</span>
               </div>
               <div className="flex items-center gap-1.5 text-[11px] font-semibold text-[#006b5f] mt-auto">
                 <LineChart className="size-4" />
                 Hasil Asesmen Pusdatin 2025
               </div>
-            </div>
+            </motion.div>
           </StaggerItem>
         </StaggerChildren>
 
@@ -343,8 +380,9 @@ export function StudentCounseling() {
                 </span>
               </div>
               
-              <div className="flex flex-col gap-3">
+              <StaggerChildren staggerDelay={0.08} delayChildren={0.05} className="flex flex-col gap-3">
                 {/* Counselor 1 */}
+                <StaggerItem>
                 <div
                   role="button"
                   tabIndex={0}
@@ -376,8 +414,10 @@ export function StudentCounseling() {
                     Pilih
                   </button>
                 </div>
+                </StaggerItem>
 
                 {/* Counselor 2 */}
+                <StaggerItem>
                 <div
                   role="button"
                   tabIndex={0}
@@ -406,8 +446,10 @@ export function StudentCounseling() {
                     Pilih
                   </button>
                 </div>
+                </StaggerItem>
 
                 {/* Counselor 3 */}
+                <StaggerItem>
                 <div
                   role="button"
                   tabIndex={0}
@@ -436,7 +478,8 @@ export function StudentCounseling() {
                     Pilih
                   </button>
                 </div>
-              </div>
+                </StaggerItem>
+              </StaggerChildren>
             </div>
 
             {/* Interactive Booking Widget */}
@@ -566,7 +609,8 @@ export function StudentCounseling() {
               <p className="text-[12px] text-[#3f4946]">
                 Rekomendasi langkah praktis yang disusun bersama guru BK pada sesi sebelumnya:
               </p>
-              <div className="flex flex-col gap-3">
+              <StaggerChildren staggerDelay={0.07} className="flex flex-col gap-3">
+                <StaggerItem>
                 <label className="flex items-start gap-3 p-3 rounded-xl bg-[#edf7f4] hover:bg-[#e2f2ee] transition-colors cursor-pointer border border-transparent">
                   <input type="checkbox" defaultChecked className="mt-1 rounded w-4 h-4 accent-[#0d5c52]" />
                   <div className="flex flex-col">
@@ -576,6 +620,8 @@ export function StudentCounseling() {
                     <span className="text-[12px] text-[#3f4946]">Selesai pada 14 Feb 2025 • Hasil: 94% Informatika</span>
                   </div>
                 </label>
+                </StaggerItem>
+                <StaggerItem>
                 <label className="flex items-start gap-3 p-3 rounded-xl bg-[#edf7f4] hover:bg-[#e2f2ee] transition-colors cursor-pointer border border-transparent hover:border-[#14b8a6]/30">
                   <input type="checkbox" className="mt-1 rounded w-4 h-4 accent-[#0d5c52]" />
                   <div className="flex flex-col">
@@ -589,6 +635,8 @@ export function StudentCounseling() {
                     </div>
                   </div>
                 </label>
+                </StaggerItem>
+                <StaggerItem>
                 <label className="flex items-start gap-3 p-3 rounded-xl bg-[#edf7f4] hover:bg-[#e2f2ee] transition-colors cursor-pointer border border-transparent hover:border-[#14b8a6]/30">
                   <input type="checkbox" className="mt-1 rounded w-4 h-4 accent-[#0d5c52]" />
                   <div className="flex flex-col">
@@ -598,7 +646,8 @@ export function StudentCounseling() {
                     <span className="text-[12px] text-[#3f4946] mt-1">Membawa lembar persetujuan peminatan SNMPTN/SNBP</span>
                   </div>
                 </label>
-              </div>
+                </StaggerItem>
+              </StaggerChildren>
               <button
                 type="button"
                 onClick={() => alert("Item rencana aksi baru ditambahkan ke catatan bimbingan Anda.")}
@@ -620,7 +669,8 @@ export function StudentCounseling() {
                 <a href="#" className="text-[11px] font-semibold text-[#006b5f] hover:underline">Lihat Semua</a>
               </div>
               
-              <div className="flex flex-col gap-3">
+              <StaggerChildren staggerDelay={0.1} className="flex flex-col gap-3">
+                <StaggerItem>
                 <div className="p-4 rounded-xl bg-[#edf7f4] flex flex-col gap-2 border border-[#cee8e1]/40">
                   <div className="flex items-center justify-between">
                     <span className="px-2 py-0.5 rounded-full bg-[#d4eee7] text-[#0d5c52] text-[10px] font-bold">Sesi #04 Selesai</span>
@@ -641,7 +691,9 @@ export function StudentCounseling() {
                     </button>
                   </div>
                 </div>
-                
+                </StaggerItem>
+
+                <StaggerItem>
                 <div className="p-4 rounded-xl bg-[#edf7f4] flex flex-col gap-2 border border-[#cee8e1]/40">
                   <div className="flex items-center justify-between">
                     <span className="px-2 py-0.5 rounded-full bg-[#d4eee7] text-[#0d5c52] text-[10px] font-bold">Sesi #03 Selesai</span>
@@ -662,7 +714,8 @@ export function StudentCounseling() {
                     </button>
                   </div>
                 </div>
-              </div>
+                </StaggerItem>
+              </StaggerChildren>
             </div>
 
             {/* Emergency Hotline */}
