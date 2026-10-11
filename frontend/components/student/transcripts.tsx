@@ -377,7 +377,6 @@ export function StudentTranscripts() {
                 type="button"
                 onClick={() => window.print()}
                 className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#d4eee7] text-[#0d5c52] hover:bg-[#cee8e1] text-[12px] font-semibold transition-colors shadow-sm"
-                whileHover={{ scale: 1.04 }}
                 whileTap={{ scale: 0.96 }}
               >
                 <Printer className="size-4" />
