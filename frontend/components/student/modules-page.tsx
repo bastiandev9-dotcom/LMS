@@ -549,7 +549,7 @@ export function StudentModules() {
               <div className="flex flex-col sm:flex-row lg:flex-col gap-2 min-w-[220px]">
                 <motion.button
                   type="button"
-                  whileHover={{ scale: 1.04 }}
+                  // whileHover={{ scale: 1.04 }}
                   whileTap={{ scale: 0.96 }}
                   onClick={() => router.push("/student/modules/algoritma-pemrograman-optimasi-big-o")}
                   className="px-6 py-3 rounded-xl bg-white text-[#0d5c52] text-[15px] font-semibold hover:bg-[#abf0e2] transition-colors duration-200 shadow-md flex items-center justify-center gap-2 group"
