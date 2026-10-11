@@ -42,7 +42,6 @@ export function MuridTopbar() {
           </motion.button>
           <motion.button
             type="button"
-            whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.96 }}
             className="flex items-center gap-1 px-6 py-2 bg-[#0d5c52] text-white text-[13px] font-semibold rounded-full shadow-[0_4px_16px_rgba(13,92,82,0.28)] hover:bg-[#00433b] transition-colors duration-200"
           >
