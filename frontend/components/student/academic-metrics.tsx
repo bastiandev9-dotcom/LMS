@@ -149,7 +149,7 @@ export function AcademicMetrics() {
           className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full bg-[#0d5c52] text-white hover:bg-[#00433b] text-[13px] font-semibold shadow-[0_4px_16px_rgba(13,92,82,0.25)] transition-all duration-200"
           whileTap={{ scale: 0.98 }}
         >
-          <FileText className="size-[18px]" />
+          <FileText className="size-4.5" />
           Export Official Transcript (PDF)
         </motion.button>
       </div>
