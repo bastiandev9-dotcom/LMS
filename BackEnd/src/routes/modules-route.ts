@@ -24,6 +24,12 @@ export const modulesRoute = new Elysia({ prefix: "/api/v1/modules" })
     },
     {
       beforeHandle: requireRole(["admin", "guru", "siswa"]),
+      detail: {
+        tags: ["Modules"],
+        summary: "List modul",
+        description: "Gunakan query `?subject_id=<id>` untuk filter per mata pelajaran.",
+        security: [{ BearerAuth: [] }],
+      },
       query: t.Object({ subject_id: t.Optional(t.String()) }),
     }
   )
@@ -46,6 +52,11 @@ export const modulesRoute = new Elysia({ prefix: "/api/v1/modules" })
     },
     {
       beforeHandle: requireRole(["admin", "guru"]),
+      detail: {
+        tags: ["Modules"],
+        summary: "Buat modul baru",
+        security: [{ BearerAuth: [] }],
+      },
       body: t.Object({
         subject_id: t.String(),
         title: t.String(),
@@ -72,6 +83,12 @@ export const modulesRoute = new Elysia({ prefix: "/api/v1/modules" })
     },
     {
       beforeHandle: requireRole(["admin", "guru"]),
+      detail: {
+        tags: ["Modules"],
+        summary: "Update modul",
+        description: "Guru hanya bisa update modul miliknya sendiri. Admin bisa update semua.",
+        security: [{ BearerAuth: [] }],
+      },
       params: t.Object({ id: t.String() }),
       body: t.Object({
         title: t.Optional(t.String()),
@@ -91,5 +108,10 @@ export const modulesRoute = new Elysia({ prefix: "/api/v1/modules" })
     }
   }, {
     beforeHandle: requireRole(["admin", "guru"]),
+    detail: {
+      tags: ["Modules"],
+      summary: "Hapus modul",
+      security: [{ BearerAuth: [] }],
+    },
     params: t.Object({ id: t.String() }),
   });

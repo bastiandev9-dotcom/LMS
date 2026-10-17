@@ -32,6 +32,11 @@ export const lessonsRoute = new Elysia({ prefix: "/api/v1/lessons" })
     },
     {
       beforeHandle: requireRole(["admin", "guru"]),
+      detail: {
+        tags: ["Lessons"],
+        summary: "Buat lesson baru",
+        security: [{ BearerAuth: [] }],
+      },
       body: t.Object({
         module_id: t.String(),
         title: t.String(),
@@ -59,5 +64,10 @@ export const lessonsRoute = new Elysia({ prefix: "/api/v1/lessons" })
     }
   }, {
     beforeHandle: requireRole(["admin", "guru", "siswa"]),
+    detail: {
+      tags: ["Lessons"],
+      summary: "List lessons berdasarkan modul",
+      security: [{ BearerAuth: [] }],
+    },
     params: t.Object({ moduleId: t.String() }),
   });
