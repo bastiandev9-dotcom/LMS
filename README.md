@@ -41,7 +41,7 @@ LMS/
 
 - [Bun](https://bun.sh) v1.4+
 - [Node.js](https://nodejs.org) v18+
-- Database PostgreSQL — bisa pakai [Supabase](https://supabase.com) (gratis) atau Docker lokal
+- [Docker Desktop](https://www.docker.com/products/docker-desktop) — database PostgreSQL 16 dijalankan lewat `docker compose`
 
 ---
 
@@ -64,19 +64,26 @@ bun install
 
 # Setup environment
 cp .env.example .env
-# Edit .env — isi DATABASE_URL dan JWT_SECRET
+# Edit .env — minimal ganti JWT_SECRET
 ```
 
 Contoh isi `.env`:
 ```env
-DATABASE_URL=postgresql://postgres:[PASSWORD]@db.[PROJECT].supabase.co:5432/postgres
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/simanis
+STORAGE_DATABASE_URL=postgresql://postgres:postgres@localhost:5432/storage_simanis
 JWT_SECRET=isi_string_acak_minimal_32_karakter
 PORT=3000
 ```
 
 ```bash
-# Sinkronkan schema ke database
-bun run db:push
+# Nyalakan PostgreSQL (sekali saja untuk container + volume-nya)
+docker compose up -d
+
+# Terapkan migrasi ke kedua database
+bun run db:migrate
+
+# Isi data awal (opsional, untuk development)
+bun run seed
 
 # Jalankan server (watch mode)
 bun run dev
@@ -102,6 +109,25 @@ npm run dev
 ```
 
 Frontend berjalan di `http://localhost:3001`.
+
+### Troubleshooting Database
+
+**Gejala:** `psql`/DBeaver hanya menampilkan database `simanis`, sedangkan `storage_simanis` tidak ada atau kosong tanpa tabel.
+
+Penyebabnya: container PostgreSQL hanya membuat `simanis` (dari `POSTGRES_DB`), sedangkan `storage_simanis` dibuat oleh script di `BackEnd/initdb/`. Script init **hanya dijalankan saat volume database masih kosong**, jadi mesin yang volume-nya sudah terlanjur terbentuk tidak mendapat database kedua.
+
+Solusinya, dari folder `BackEnd`:
+
+```bash
+# Buang volume lama lalu buat ulang dari nol (data lokal akan hilang)
+docker compose down -v
+docker compose up -d
+
+# Terapkan migrasi + data awal
+bun run db:setup
+```
+
+Kalau DBeaver masih hanya menampilkan satu database, aktifkan opsi **Show all databases** di *Connection settings → PostgreSQL* pada koneksi tersebut.
 
 ---
 
@@ -151,11 +177,18 @@ BackEnd/
 │   ├── services/             # Business logic
 │   ├── middleware/           # Auth middleware (JWT)
 │   └── db/
-│       ├── index.ts          # Koneksi database
+│       ├── index.ts          # Koneksi database simanis
+│       ├── storage.ts        # Koneksi database storage_simanis
 │       ├── schema.ts         # Definisi tabel (Drizzle)
+│       ├── storage-schema.ts # Definisi tabel storage
+│       ├── migrate.ts        # Runner migrasi kedua database
 │       └── seed.ts           # Data awal
-├── drizzle/                  # File migrasi SQL
-├── drizzle.config.ts         # Konfigurasi Drizzle Kit
+├── drizzle/                  # Migrasi SQL — database simanis
+├── drizzle-storage/          # Migrasi SQL — database storage_simanis
+├── initdb/                   # Script init container PostgreSQL
+├── drizzle.config.ts         # Konfigurasi Drizzle Kit (simanis)
+├── drizzle.storage.config.ts # Konfigurasi Drizzle Kit (storage_simanis)
+├── docker-compose.yml        # PostgreSQL 16 → simanis + storage_simanis
 └── package.json
 ```
 
@@ -190,8 +223,14 @@ FrontEnd/
 | Command | Fungsi |
 |---|---|
 | `bun run dev` | Jalankan server + auto-reload |
-| `bun run db:push` | Sinkronkan schema ke database |
+| `bun run db:migrate` | Terapkan migrasi ke database `simanis` dan `storage_simanis` |
+| `bun run db:generate` | Buat file migrasi baru dari `src/db/schema.ts` |
+| `bun run db:generate:storage` | Buat file migrasi baru dari `src/db/storage-schema.ts` |
+| `bun run db:setup` | `db:migrate` lalu `seed` |
+| `bun run db:push` | Push schema langsung tanpa file migrasi (dev cepat) |
 | `bun run seed` | Isi data awal ke database |
+
+> Jalankan semua perintah database dari folder `BackEnd`.
 
 ### FrontEnd
 
