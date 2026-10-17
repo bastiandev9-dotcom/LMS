@@ -20,6 +20,22 @@ const targets = [
   ["STORAGE_DATABASE_URL", "drizzle-storage"],
 ] as const;
 
+/** Ambil pesan paling akar dari error yang dibungkus drizzle/postgres. */
+function describeError(error: unknown): string {
+  const messages: string[] = [];
+  let current: unknown = error;
+
+  while (current && typeof current === "object" && messages.length < 5) {
+    const candidate = current as { message?: unknown; cause?: unknown };
+    if (typeof candidate.message === "string") messages.push(candidate.message);
+    current = candidate.cause;
+  }
+
+  return messages.length > 0
+    ? messages.join(" → ").replace(/\s+/g, " ").trim()
+    : String(error);
+}
+
 for (const [envName, migrationsFolder] of targets) {
   const url = process.env[envName];
 
@@ -48,9 +64,11 @@ for (const [envName, migrationsFolder] of targets) {
     await migrate(drizzle(client), { migrationsFolder: folder });
     console.log(`✅ Migrasi ${migrationsFolder} selesai`);
   } catch (error) {
-    console.error(`❌ Migrasi ${migrationsFolder} gagal:\n`, error);
     console.error(
-      "   Pastikan database-nya sudah ada (lihat README → Setup Database).",
+      `❌ Migrasi ${migrationsFolder} gagal: ${describeError(error)}`,
+    );
+    console.error(
+      "   Pastikan database-nya sudah ada (lihat README → Troubleshooting Database).",
     );
     await client.end();
     process.exit(1);
