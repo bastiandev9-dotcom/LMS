@@ -89,6 +89,8 @@ bun run seed
 bun run dev
 ```
 
+> Langkah migrasi + seed bisa disingkat jadi satu perintah: `bun run db:setup`.
+
 Server berjalan di `http://localhost:3000`.
 Swagger UI tersedia di `http://localhost:3000/swagger`.
 
@@ -112,9 +114,11 @@ Frontend berjalan di `http://localhost:3001`.
 
 ### Troubleshooting Database
 
-**Gejala:** `psql`/DBeaver hanya menampilkan database `simanis`, sedangkan `storage_simanis` tidak ada atau kosong tanpa tabel.
+**Gejala 1:** `bun run db:migrate` gagal dengan pesan `database "storage_simanis" does not exist`.
 
-Penyebabnya: container PostgreSQL hanya membuat `simanis` (dari `POSTGRES_DB`), sedangkan `storage_simanis` dibuat oleh script di `BackEnd/initdb/`. Script init **hanya dijalankan saat volume database masih kosong**, jadi mesin yang volume-nya sudah terlanjur terbentuk tidak mendapat database kedua.
+**Gejala 2:** `psql`/DBeaver hanya menampilkan database `simanis`; `storage_simanis` tidak ada atau ada tapi tanpa tabel.
+
+Kedua gejala punya sebab yang sama: container PostgreSQL hanya membuat `simanis` (dari `POSTGRES_DB`), sedangkan `storage_simanis` dibuat oleh script di `BackEnd/initdb/`. Script init **hanya dijalankan saat volume database masih kosong**, jadi mesin yang volume-nya sudah terbentuk sebelum perubahan ini tidak mendapat database kedua.
 
 Solusinya, dari folder `BackEnd`:
 
@@ -126,6 +130,8 @@ docker compose up -d
 # Terapkan migrasi + data awal
 bun run db:setup
 ```
+
+Setelah itu `docker exec simanis-db psql -U postgres -lqt` harus menampilkan `simanis` **dan** `storage_simanis`.
 
 Kalau DBeaver masih hanya menampilkan satu database, aktifkan opsi **Show all databases** di *Connection settings → PostgreSQL* pada koneksi tersebut.
 
@@ -213,6 +219,37 @@ FrontEnd/
 ├── hooks/                    # Custom hooks
 └── middleware.ts             # Auth middleware Next.js
 ```
+
+---
+
+## Database & Migrasi
+
+Satu server PostgreSQL menyimpan **dua database**:
+
+| Database | Isi | Config Drizzle | Folder migrasi |
+|---|---|---|---|
+| `simanis` | data utama (users, subjects, modules, lessons, enrollments, ...) | `drizzle.config.ts` | `BackEnd/drizzle/` |
+| `storage_simanis` | file upload (`uploaded_files`) | `drizzle.storage.config.ts` | `BackEnd/drizzle-storage/` |
+
+Database-nya dibuat otomatis oleh `BackEnd/initdb/01-create-storage-db.sql` ketika volume Docker masih kosong; tabelnya dibuat oleh file migrasi yang ter-commit di repo. Karena itu **jangan** membuat tabel manual di DBeaver/psql — perubahan schema harus lewat migrasi supaya semua orang mendapat struktur yang sama.
+
+### Setelah mengubah schema
+
+```bash
+cd BackEnd
+
+# 1. Generate file migrasi dari schema.ts
+bun run db:generate
+
+# 2. Terapkan ke database
+bun run db:migrate
+
+# 3. Commit folder drizzle/ beserta meta/ — tanpa ini, mesin lain tidak ikut berubah
+```
+
+Untuk tabel storage (`src/db/storage-schema.ts`), langkah 1 diganti dengan `bun run db:generate:storage` (output ke `drizzle-storage/`).
+
+`bun run db:push` hanya untuk eksperimen lokal: ia menyamakan database langsung tanpa menghasilkan file migrasi, sehingga tidak bisa direproduksi di mesin lain. Jangan dipakai sebagai alur utama.
 
 ---
 
