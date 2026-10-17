@@ -32,6 +32,12 @@ export const enrollmentsRoute = new Elysia({ prefix: "/api/v1/enrollments" })
     },
     {
       beforeHandle: requireRole(["siswa"]),
+      detail: {
+        tags: ["Enrollments"],
+        summary: "Daftar ke mata pelajaran",
+        description: "Hanya bisa dilakukan oleh siswa. Otomatis menggunakan ID siswa yang login.",
+        security: [{ BearerAuth: [] }],
+      },
       body: t.Object({
         subject_id: t.String(),
       }),
@@ -54,6 +60,11 @@ export const enrollmentsRoute = new Elysia({ prefix: "/api/v1/enrollments" })
     }
   }, {
     beforeHandle: requireRole(["admin", "guru", "siswa"]),
+    detail: {
+      tags: ["Enrollments"],
+      summary: "List mata pelajaran yang diikuti",
+      security: [{ BearerAuth: [] }],
+    },
   })
   .patch(
     "/:id/status",
@@ -75,6 +86,12 @@ export const enrollmentsRoute = new Elysia({ prefix: "/api/v1/enrollments" })
     },
     {
       beforeHandle: requireRole(["admin", "guru"]),
+      detail: {
+        tags: ["Enrollments"],
+        summary: "Update status enrollment",
+        description: "Digunakan admin/guru untuk approve atau reject pendaftaran.",
+        security: [{ BearerAuth: [] }],
+      },
       params: t.Object({ id: t.String() }),
       body: t.Object({
         status: t.String(),

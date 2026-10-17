@@ -20,6 +20,11 @@ export const subjectsRoute = new Elysia({ prefix: "/api/v1/subjects" })
     }
   }, {
     beforeHandle: requireRole(["admin", "guru", "siswa"]),
+    detail: {
+      tags: ["Subjects"],
+      summary: "List semua mata pelajaran",
+      security: [{ BearerAuth: [] }],
+    },
   })
   .post(
     "/",
@@ -37,6 +42,11 @@ export const subjectsRoute = new Elysia({ prefix: "/api/v1/subjects" })
     },
     {
       beforeHandle: requireRole(["admin", "guru"]),
+      detail: {
+        tags: ["Subjects"],
+        summary: "Buat mata pelajaran baru",
+        security: [{ BearerAuth: [] }],
+      },
       body: t.Object({
         name: t.String(),
         code: t.String(),
@@ -57,6 +67,11 @@ export const subjectsRoute = new Elysia({ prefix: "/api/v1/subjects" })
     },
     {
       beforeHandle: requireRole(["admin"]),
+      detail: {
+        tags: ["Subjects"],
+        summary: "Update mata pelajaran",
+        security: [{ BearerAuth: [] }],
+      },
       params: t.Object({ id: t.String() }),
       body: t.Object({
         name: t.Optional(t.String()),
@@ -78,6 +93,11 @@ export const subjectsRoute = new Elysia({ prefix: "/api/v1/subjects" })
     },
     {
       beforeHandle: requireRole(["admin"]),
+      detail: {
+        tags: ["Subjects"],
+        summary: "Hapus mata pelajaran",
+        security: [{ BearerAuth: [] }],
+      },
       params: t.Object({ id: t.String() }),
     }
   );
