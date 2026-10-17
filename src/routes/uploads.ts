@@ -45,6 +45,10 @@ export const uploadsRoute = new Elysia({ prefix: "/api/v1/uploads" })
 
         const origin = new URL(request.url).origin;
 
+        if (!inserted) {
+          return status(500, { success: false, message: "Gagal menyimpan file" });
+        }
+
         return status(201, {
           success: true,
           message: "File berhasil diunggah",
@@ -57,6 +61,12 @@ export const uploadsRoute = new Elysia({ prefix: "/api/v1/uploads" })
     },
     {
       beforeHandle: requireRole(["admin", "guru", "siswa"]),
+      detail: {
+        tags: ["Uploads"],
+        summary: "Upload file",
+        description: "Menerima multipart/form-data. Maksimal ukuran file 10 MB. Mengembalikan URL file yang dapat diakses.",
+        security: [{ BearerAuth: [] }],
+      },
       body: t.Object({
         file: t.File(),
       }),
@@ -98,6 +108,12 @@ export const uploadsRoute = new Elysia({ prefix: "/api/v1/uploads" })
     },
     {
       beforeHandle: requireRole(["admin", "guru", "siswa"]),
+      detail: {
+        tags: ["Uploads"],
+        summary: "Ambil file berdasarkan ID",
+        description: "Mengembalikan file langsung (stream) dengan Content-Type sesuai format file asli.",
+        security: [{ BearerAuth: [] }],
+      },
       params: t.Object({ id: t.String() }),
     }
   );

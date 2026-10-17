@@ -7,7 +7,7 @@ import {
 } from "../services/users-services";
 import { authMiddleware } from "../middleware/auth-middleware";
 
-export const usersRoute = new Elysia({ prefix: "/api/users" })
+export const usersRoute = new Elysia({ prefix: "/api/v1/users" })
   .post(
     "/",
     async ({ body, status }) => {
@@ -31,6 +31,11 @@ export const usersRoute = new Elysia({ prefix: "/api/users" })
       }
     },
     {
+      detail: {
+        tags: ["Auth"],
+        summary: "Register user baru",
+        description: "Mendaftarkan user baru dengan role admin, guru, atau siswa.",
+      },
       body: t.Object({
         full_name: t.Optional(t.String()),
         name: t.Optional(t.String()),
@@ -44,8 +49,6 @@ export const usersRoute = new Elysia({ prefix: "/api/users" })
   )
   .post(
     "/login",
-    // `jwt` berasal dari plugin @elysiajs/jwt yang diregistrasi di
-    // src/index.ts sebelum usersRoute di-mount.
     async ({ body, status, jwt }: any) => {
       try {
         const payload = await buildLoginPayload(body);
@@ -65,6 +68,11 @@ export const usersRoute = new Elysia({ prefix: "/api/users" })
       }
     },
     {
+      detail: {
+        tags: ["Auth"],
+        summary: "Login — dapatkan JWT token",
+        description: "Mengembalikan JWT token yang digunakan sebagai Bearer token di semua endpoint terproteksi.",
+      },
       body: t.Object({
         email: t.String(),
         password: t.String(),
@@ -74,10 +82,23 @@ export const usersRoute = new Elysia({ prefix: "/api/users" })
   .use(authMiddleware)
   .get("/current", async ({ user, status }) => {
     return status(200, { data: user });
+  }, {
+    detail: {
+      tags: ["Auth"],
+      summary: "Data user yang sedang login",
+      security: [{ BearerAuth: [] }],
+    },
   })
   .delete("/logout", async ({ session, status }) => {
     await logoutUser(session.token);
     return status(200, { data: "OK" });
+  }, {
+    detail: {
+      tags: ["Auth"],
+      summary: "Logout",
+      description: "Stateless logout — token dihapus di sisi klien.",
+      security: [{ BearerAuth: [] }],
+    },
   })
   .put(
     "/profile",
@@ -104,6 +125,11 @@ export const usersRoute = new Elysia({ prefix: "/api/users" })
       }
     },
     {
+      detail: {
+        tags: ["Auth"],
+        summary: "Update profil user",
+        security: [{ BearerAuth: [] }],
+      },
       body: t.Object({
         fullName: t.Optional(t.String()),
         phone: t.Optional(t.String()),

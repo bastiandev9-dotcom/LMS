@@ -25,6 +25,12 @@ export const progressRoute = new Elysia({ prefix: "/api/v1/progress" })
     },
     {
       beforeHandle: requireRole(["siswa"]),
+      detail: {
+        tags: ["Progress"],
+        summary: "Tandai lesson sebagai selesai",
+        description: "Dipanggil saat siswa selesai membaca/menonton sebuah lesson.",
+        security: [{ BearerAuth: [] }],
+      },
       params: t.Object({
         lessonId: t.String(),
       }),
@@ -50,6 +56,11 @@ export const progressRoute = new Elysia({ prefix: "/api/v1/progress" })
     },
     {
       beforeHandle: requireRole(["admin", "guru", "siswa"]),
+      detail: {
+        tags: ["Progress"],
+        summary: "Persentase progress siswa di suatu mata pelajaran",
+        security: [{ BearerAuth: [] }],
+      },
       params: t.Object({
         subjectId: t.String(),
       }),
