@@ -1,279 +1,256 @@
-# LMS Sem5 — Learning Management System API
+# SiManis — Learning Management System
 
-Backend REST API untuk LMS, dibangun dengan [Bun](https://bun.com), [Elysia](https://elysiajs.com), [Drizzle ORM](https://orm.drizzle.team), dan PostgreSQL (Docker lokal).
+![Bun](https://img.shields.io/badge/Bun-1.4+-black?logo=bun)
+![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue?logo=postgresql)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-## Fitur
-
-Auth User (`/api/users`):
-
-| Method | Endpoint | Auth | Keterangan |
-| --- | --- | --- | --- |
-| `GET` | `/` | — | Health check → `{ "status": "ok" }` |
-| `POST` | `/api/users` | — | Register (`full_name`, `email`, `password`, `role?`, `phone?`, `avatar_url?`) |
-| `POST` | `/api/users/login` | — | Login → `{ "data": "<JWT>" }` |
-| `GET` | `/api/users/current` | Bearer token | Ambil user yang sedang login |
-| `DELETE` | `/api/users/logout` | Bearer token | Logout (stateless) → `{ "data": "OK" }` |
-
-- `role` opsional saat register: `admin` \| `guru` \| `siswa` (default: `siswa`). Alias `teacher`/`student` tetap diterima.
-- Login mengembalikan JWT dengan payload `{ sub, email, role }` (role diambil via JOIN `user_roles` + `roles`).
-- Route terproteksi memakai header `Authorization: Bearer <token>` murni (token tidak dibaca dari query param).
-
-Subjects (`/api/subjects`):
-
-| Method | Endpoint | Auth | Keterangan |
-| --- | --- | --- | --- |
-| `POST` | `/api/subjects` | admin, guru | Buat mapel (`name`, `code`, `description?`), `created_by` dari JWT |
-| `GET` | `/api/subjects` | semua role login | List + `created_by_name` (JOIN users) |
-| `PUT` | `/api/subjects/:id` | admin | Update mapel |
-| `DELETE` | `/api/subjects/:id` | admin | Hapus mapel |
-
-Modules (`/api/modules`):
-
-| Method | Endpoint | Auth | Keterangan |
-| --- | --- | --- | --- |
-| `POST` | `/api/modules` | admin, guru | Buat modul (`subject_id`, `title`, `description?`, `order_index?`), `teacher_id` dari JWT |
-| `GET` | `/api/modules?subject_id=xxx` | semua role login | List + filter opsional, JOIN subjects & users (`subject_name`, `teacher_name`) |
-| `PUT` | `/api/modules/:id` | admin / guru pemilik | Update modul milik sendiri |
-| `DELETE` | `/api/modules/:id` | admin / guru pemilik | Hapus modul milik sendiri |
-
-- Role guard (`requireRole`) menolak dengan `403 {"error":"Akses ditolak: Peran tidak valid"}` bila role di luar daftar yang diizinkan.
-- Dokumentasi interaktif (Swagger UI) tersedia tanpa setup tambahan.
-
-## Prasyarat
-
-1. [Bun](https://bun.sh) v1.4+ terinstall (`bun --version`).
-2. [Docker](https://www.docker.com/) & [Docker Compose](https://docs.docker.com/compose/) terinstall.
-
-## Cara Menjalankan (Docker & Local DB)
-
-```bash
-# 1. Jalankan database PostgreSQL lokal (pgvector via Docker Compose)
-docker compose up -d
-
-# 2. Install dependencies backend
-bun install
-
-# 3. Setup environment backend (.env sudah di-default ke docker)
-cp .env.example .env
-
-# 4. Sinkronkan schema ke database
-bun run db:push
-
-# 5. Jalankan server backend (watch mode)
-bun run dev:backend
-```
-
-Server backend berjalan di `http://localhost:3000`.
+Platform manajemen pembelajaran (LMS) untuk SMK Mataram — mencakup manajemen siswa, guru, mata pelajaran, modul, dan bimbingan konseling.
 
 ---
 
-## Cara Menjalankan Frontend
+## Struktur Proyek
 
-Masuk ke direktori `frontend`:
+```
+LMS/
+├── BackEnd/      # REST API — Bun + Elysia + Drizzle ORM
+├── FrontEnd/     # Web App — Next.js 15 + Tailwind CSS
+└── README.md
+```
+
+---
+
+## Tech Stack
+
+| Layer | Teknologi |
+|---|---|
+| Runtime | [Bun](https://bun.sh) v1.4+ |
+| Backend Framework | [Elysia](https://elysiajs.com) |
+| ORM | [Drizzle ORM](https://orm.drizzle.team) |
+| Database | PostgreSQL (via [Supabase](https://supabase.com) atau Docker) |
+| Frontend Framework | [Next.js 15](https://nextjs.org) |
+| Styling | [Tailwind CSS v4](https://tailwindcss.com) |
+| UI Components | [Shadcn/UI](https://ui.shadcn.com) |
+| State Management | [Zustand](https://zustand-demo.pmnd.rs) + [TanStack Query](https://tanstack.com/query) |
+| Animation | [Framer Motion](https://www.framer.com/motion) |
+
+---
+
+## Prasyarat
+
+- [Bun](https://bun.sh) v1.4+
+- [Node.js](https://nodejs.org) v18+
+- Database PostgreSQL — bisa pakai [Supabase](https://supabase.com) (gratis) atau Docker lokal
+
+---
+
+## Cara Menjalankan
+
+### 1. Clone Repository
 
 ```bash
-cd frontend
+git clone https://github.com/rafifhardjaa/LMS.git
+cd LMS
+```
+
+### 2. Setup BackEnd
+
+```bash
+cd BackEnd
+
+# Install dependencies
+bun install
+
+# Setup environment
+cp .env.example .env
+# Edit .env — isi DATABASE_URL dan JWT_SECRET
+```
+
+Contoh isi `.env`:
+```env
+DATABASE_URL=postgresql://postgres:[PASSWORD]@db.[PROJECT].supabase.co:5432/postgres
+JWT_SECRET=isi_string_acak_minimal_32_karakter
+PORT=3000
+```
+
+```bash
+# Sinkronkan schema ke database
+bun run db:push
+
+# Jalankan server (watch mode)
+bun run dev
+```
+
+Server berjalan di `http://localhost:3000`.
+Swagger UI tersedia di `http://localhost:3000/swagger`.
+
+### 3. Setup FrontEnd
+
+```bash
+cd FrontEnd
+
+# Install dependencies
 npm install
+
+# Setup environment
+cp .env.example .env
+# Pastikan NEXT_PUBLIC_API_URL mengarah ke backend
+
+# Jalankan development server
 npm run dev
 ```
 
 Frontend berjalan di `http://localhost:3001`.
 
-> Cek cepat: buka `http://localhost:3000/` → harusnya `{ "status": "ok" }`.
+---
 
-## Lihat & Coba API di Swagger UI
+## API Endpoints
 
-Tidak perlu Postman untuk eksplorasi awal:
+### Auth — `/api/users`
 
-- Swagger UI: **http://localhost:3000/swagger**
-- Alternatif: **http://localhost:3000/docs** (isi sama)
+| Method | Endpoint | Auth | Keterangan |
+|---|---|---|---|
+| `GET` | `/` | — | Health check |
+| `POST` | `/api/users` | — | Register user baru |
+| `POST` | `/api/users/login` | — | Login → JWT token |
+| `GET` | `/api/users/current` | Bearer | Data user aktif |
+| `DELETE` | `/api/users/logout` | Bearer | Logout (stateless) |
 
-Di halaman itu kamu bisa:
+### Subjects — `/api/subjects`
 
-1. Lihat semua endpoint + schema body.
-2. Klik **Try it out** → **Execute** untuk menembak API langsung dari browser.
-3. Untuk endpoint gembok (`/current`, `/logout`), klik tombol **Authorize** 🔓 dan isi `Bearer <token>` (token didapat dari login).
+| Method | Endpoint | Auth | Keterangan |
+|---|---|---|---|
+| `POST` | `/api/subjects` | admin, guru | Buat mata pelajaran |
+| `GET` | `/api/subjects` | semua | List mata pelajaran |
+| `PUT` | `/api/subjects/:id` | admin | Update mata pelajaran |
+| `DELETE` | `/api/subjects/:id` | admin | Hapus mata pelajaran |
 
-## Contoh Alur via curl
+### Modules — `/api/modules`
 
-```bash
-# Register
-curl -X POST http://localhost:3000/api/users \
-  -H "Content-Type: application/json" \
-  -d '{"full_name":"Budi","email":"budi@mail.com","password":"rahasia123","role":"siswa"}'
+| Method | Endpoint | Auth | Keterangan |
+|---|---|---|---|
+| `POST` | `/api/modules` | admin, guru | Buat modul |
+| `GET` | `/api/modules` | semua | List modul (filter `?subject_id=`) |
+| `PUT` | `/api/modules/:id` | admin, guru pemilik | Update modul |
+| `DELETE` | `/api/modules/:id` | admin, guru pemilik | Hapus modul |
 
-# Login (simpan tokennya)
-curl -X POST http://localhost:3000/api/users/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"budi@mail.com","password":"rahasia123"}'
-# → {"data":"<TOKEN>"}
+> Role yang tersedia: `admin` \| `guru` \| `siswa`
 
-# Ganti <TOKEN> dengan token dari login
-TOKEN=<TOKEN>
+---
 
-# Current user
-curl http://localhost:3000/api/users/current \
-  -H "Authorization: Bearer $TOKEN"
+## Struktur Folder
 
-# Logout
-curl -X DELETE http://localhost:3000/api/users/logout \
-  -H "Authorization: Bearer $TOKEN"
-```
-
-Error umum:
-
-- `400 {"error":"Email sudah terdaftar"}` → pakai email lain.
-- `400 {"error":"Role tidak valid"}` → role harus `admin`/`guru`/`siswa` (atau alias `teacher`/`student`).
-- `401 {"error":"Email atau password salah"}` / `{"error":"Unauthorized"}` → cek email/password atau token Bearer.
-
-## Struktur Proyek
+### BackEnd
 
 ```
-src/
-├── index.ts                  # Entry point: Elysia + cors + swagger (/docs, /swagger) + jwt + routes
-├── routes/
-│   └── users-route.ts        # Routing Elysia (prefix /api/users)
-├── services/
-│   └── users-services.ts     # Logic bisnis: createUser, buildLoginPayload, getCurrentUserById, logoutUser
-├── middleware/
-│   └── auth-middleware.ts    # Verifikasi JWT dari header Bearer → inject { user, session }
-└── db/
-    ├── index.ts              # Koneksi drizzle + postgres-js
-    └── schema.ts             # Skema SIMANIS: users, roles, user_roles, subjects, modules + relations
-drizzle.config.ts             # Config drizzle-kit (schema + DATABASE_URL)
+BackEnd/
+├── src/
+│   ├── index.ts              # Entry point
+│   ├── routes/               # Definisi endpoint Elysia
+│   ├── services/             # Business logic
+│   ├── middleware/           # Auth middleware (JWT)
+│   └── db/
+│       ├── index.ts          # Koneksi database
+│       ├── schema.ts         # Definisi tabel (Drizzle)
+│       └── seed.ts           # Data awal
+├── drizzle/                  # File migrasi SQL
+├── drizzle.config.ts         # Konfigurasi Drizzle Kit
+└── package.json
 ```
 
-Pola nambah fitur baru: tulis logic di `services/`, daftarkan route di `routes/`, proteksi route dengan `.use(authMiddleware)` (tidak perlu parsing `Authorization` manual).
+### FrontEnd
 
-## Scripts (Backend)
+```
+FrontEnd/
+├── app/                      # Halaman (Next.js App Router)
+│   ├── admin/                # Dashboard admin
+│   ├── teacher/              # Dashboard guru
+│   ├── student/              # Dashboard siswa
+│   └── auth/                 # Login & register
+├── components/               # Komponen UI
+│   ├── admin/
+│   ├── teacher/
+│   ├── student/
+│   └── ui/                   # Komponen Shadcn
+├── lib/
+│   ├── api/                  # API client
+│   ├── store/                # Zustand state
+│   └── providers/            # React providers
+├── hooks/                    # Custom hooks
+└── middleware.ts             # Auth middleware Next.js
+```
+
+---
+
+## Scripts
+
+### BackEnd
 
 | Command | Fungsi |
-| --- | --- |
-| `docker compose up -d` | Menyalakan local PostgreSQL + pgvector container |
-| `docker compose down` | Mematikan local database container |
-| `bun run dev:backend` | Jalankan server backend + auto-reload (`src/index.ts`) |
-| `bun run db:push` | Push schema Drizzle ke database (`drizzle-kit push`) |
-| `bun run seed` | Seed data awal ke database |
+|---|---|
+| `bun run dev` | Jalankan server + auto-reload |
+| `bun run db:push` | Sinkronkan schema ke database |
+| `bun run seed` | Isi data awal ke database |
 
-## Troubleshooting
+### FrontEnd
 
-- `DATABASE_URL is not defined` / gagal konek DB → Pastikan container Docker berjalan (`docker compose ps`) dan `.env` ada dengan `DATABASE_URL="postgresql://postgres:postgres@localhost:5432/simanis"`.
-- Port 5432 tabrakan → Pastikan service PostgreSQL lokal host tidak sedang jalan.
-- `JWT_SECRET` kosong → isi string acak, server butuh ini untuk plugin `@elysiajs/jwt`.
-- Port 3000 dipakai → ganti `PORT` di `.env` (misal `PORT=3002`), sesuaikan `NEXT_PUBLIC_API_URL` di `frontend/.env`.
-- `bun run db:push` gagal → cek apakah docker postgres sudah healthy (`docker compose logs db`).
-
-
----
-
-## LMS Frontend
-
-Frontend untuk aplikasi Learning Management System (LMS) yang dibangun menggunakan **Next.js 16**, **TypeScript**, dan **Tailwind CSS**.
-
----
-
-### Teknologi yang Digunakan
-
-- [Next.js 16](https://nextjs.org) — Framework React
-- [TypeScript](https://www.typescriptlang.org) — Type safety
-- [Tailwind CSS v4](https://tailwindcss.com) — Styling
-- [TanStack Query](https://tanstack.com/query) — State management & fetching data
-- [Zustand](https://zustand-demo.pmnd.rs) — Global state
-- [Shadcn/UI](https://ui.shadcn.com) — Komponen UI
-- [Recharts](https://recharts.org) — Grafik & chart
-- [Framer Motion](https://www.framer.com/motion) — Animasi
-
----
-
-### Prasyarat
-
-Pastikan perangkat kamu sudah terinstal:
-
-- [Node.js](https://nodejs.org) versi **18** ke atas
-- [npm](https://www.npmjs.com) (sudah termasuk saat install Node.js)
-- [Git](https://git-scm.com)
-
----
-
-### Cara Setup dari Awal
-
-#### 1. Clone Repository
-
-```bash
-git clone https://github.com/rafifhardjaa/LMS.git
-cd LMS
-git checkout frontend
-```
-
-#### 2. Install Dependencies
-
-```bash
-npm install
-```
-
-#### 3. Jalankan Development Server
-
-```bash
-npm run dev
-```
-
-Buka browser dan akses [http://localhost:3001](http://localhost:3001).
-
-> Frontend berjalan di port **3001**, sedangkan backend berjalan di port **3000**.
-
----
-
-### Struktur Folder
-
-```
-frontend/
-├── app/                  # Halaman (App Router Next.js)
-│   ├── admin/            # Halaman khusus admin
-│   ├── teacher/          # Halaman khusus guru
-│   ├── student/          # Halaman khusus siswa
-│   ├── auth/             # Halaman login & register
-│   └── layout.tsx        # Layout utama
-├── components/           # Komponen UI
-│   ├── admin/            # Komponen khusus admin
-│   ├── teacher/          # Komponen khusus guru
-│   ├── student/          # Komponen khusus siswa
-│   └── ui/               # Komponen umum (Shadcn)
-├── lib/                  # Utilitas & konfigurasi
-│   ├── api/              # Fungsi pemanggilan API
-│   ├── store/            # Zustand global state
-│   └── providers/        # React providers
-├── hooks/                # Custom React hooks
-├── public/               # Aset statis
-└── middleware.ts         # Middleware autentikasi
-```
-
----
-
-### Scripts yang Tersedia
-
-| Perintah | Fungsi |
-|----------|--------|
-| `npm run dev` | Jalankan server development di port 3001 |
+| Command | Fungsi |
+|---|---|
+| `npm run dev` | Jalankan development server |
 | `npm run build` | Build untuk production |
-| `npm run start` | Jalankan hasil build production |
+| `npm run start` | Jalankan hasil build |
 | `npm run lint` | Cek kode dengan ESLint |
 
 ---
 
-### Kontribusi
+## Alur Kontribusi
 
-1. Buat branch baru dari `frontend`:
+```
+feature/nama-fitur  →  dev  →  staging  →  main
+```
+
+1. Buat branch dari `dev`:
    ```bash
-   git checkout frontend
-   git checkout -b nama-fitur-kamu
+   git checkout dev
+   git checkout -b feature/nama-fitur
    ```
-2. Lakukan perubahan dan commit:
+
+2. Commit perubahan:
    ```bash
    git add .
-   git commit -m "feat: deskripsi perubahan"
+   git commit -m "feat: deskripsi singkat perubahan"
    ```
-3. Push ke GitHub:
+
+3. Push dan buat Pull Request ke `dev`:
    ```bash
-   git push origin nama-fitur-kamu
+   git push -u origin feature/nama-fitur
    ```
-4. Buat Pull Request ke branch `frontend`.
+
+4. Setelah review → merge ke `dev` → `staging` → `main`
+
+### Konvensi Commit Message
+
+| Prefix | Kegunaan |
+|---|---|
+| `feat:` | Fitur baru |
+| `fix:` | Bug fix |
+| `chore:` | Maintenance, config |
+| `refactor:` | Refactoring kode |
+| `docs:` | Perubahan dokumentasi |
+
+---
+
+## Troubleshooting
+
+- **`DATABASE_URL is not defined`** → Pastikan file `.env` sudah ada dan `DATABASE_URL` terisi dengan benar.
+- **`bun run db:push` gagal** → Cek koneksi database, pastikan host & password Supabase sudah benar.
+- **`JWT_SECRET` kosong** → Wajib diisi, server tidak bisa berjalan tanpa ini.
+- **Port 3000 sudah dipakai** → Ganti `PORT` di `.env` (misal `PORT=3001`).
+- **Token masih valid setelah logout** → Normal — auth menggunakan JWT stateless, logout hanya menghapus token di sisi klien.
+
+---
+
+## License
+
+MIT © 2026 SMK Mataram
