@@ -28,6 +28,11 @@ export const notificationsRoute = new Elysia({
     },
     {
       beforeHandle: requireRole(["admin", "guru", "siswa"]),
+      detail: {
+        tags: ["Notifications"],
+        summary: "List notifikasi user yang sedang login",
+        security: [{ BearerAuth: [] }],
+      },
     }
   )
   .patch(
@@ -46,6 +51,11 @@ export const notificationsRoute = new Elysia({
     },
     {
       beforeHandle: requireRole(["admin", "guru", "siswa"]),
+      detail: {
+        tags: ["Notifications"],
+        summary: "Tandai semua notifikasi sebagai dibaca",
+        security: [{ BearerAuth: [] }],
+      },
     }
   )
   .patch(
@@ -65,6 +75,11 @@ export const notificationsRoute = new Elysia({
     },
     {
       beforeHandle: requireRole(["admin", "guru", "siswa"]),
+      detail: {
+        tags: ["Notifications"],
+        summary: "Tandai satu notifikasi sebagai dibaca",
+        security: [{ BearerAuth: [] }],
+      },
       params: t.Object({
         id: t.String(),
       }),

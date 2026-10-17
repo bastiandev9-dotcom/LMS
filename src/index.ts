@@ -14,9 +14,58 @@ import { uploadsRoute } from "./routes/uploads";
 
 const documentation = {
   info: {
-    title: "LMS API",
+    title: "SiManis LMS API",
     version: "1.0.0",
+    description: `
+## SiManis — Learning Management System API
+
+REST API untuk platform manajemen pembelajaran SMK Mataram.
+Mendukung manajemen siswa, guru, mata pelajaran, modul, lesson, enrollment, review, notifikasi, progress, dan upload file.
+
+### Autentikasi
+Gunakan \`POST /api/v1/users/login\` untuk mendapatkan JWT token, lalu klik tombol **Authorize 🔒** di atas dan masukkan:
+\`\`\`
+Bearer <token>
+\`\`\`
+
+### Role
+| Role  | Keterangan            |
+|-------|-----------------------|
+| admin | Akses penuh           |
+| guru  | Buat & kelola konten  |
+| siswa | Baca konten & enroll  |
+    `.trim(),
+    contact: {
+      name: "Tim RPL SMK Mataram",
+      email: "dev@smkmataram.sch.id",
+    },
+    license: {
+      name: "MIT",
+      url: "https://opensource.org/licenses/MIT",
+    },
   },
+  components: {
+    securitySchemes: {
+      BearerAuth: {
+        type: "http" as const,
+        scheme: "bearer" as const,
+        bearerFormat: "JWT",
+        description: "JWT token dari endpoint login. Format: `Bearer <token>`",
+      },
+    },
+  },
+  security: [{ BearerAuth: [] }],
+  tags: [
+    { name: "Auth", description: "Registrasi, login, profil, dan logout" },
+    { name: "Subjects", description: "Manajemen mata pelajaran" },
+    { name: "Modules", description: "Manajemen modul dalam mata pelajaran" },
+    { name: "Lessons", description: "Manajemen lesson dalam modul" },
+    { name: "Enrollments", description: "Pendaftaran siswa ke mata pelajaran" },
+    { name: "Reviews", description: "Ulasan siswa terhadap mata pelajaran" },
+    { name: "Notifications", description: "Notifikasi pengguna" },
+    { name: "Progress", description: "Tracking progress belajar siswa" },
+    { name: "Uploads", description: "Upload dan akses file" },
+  ],
 };
 
 const app = new Elysia()

@@ -31,6 +31,12 @@ export const reviewsRoute = new Elysia({ prefix: "/api/v1/reviews" })
     },
     {
       beforeHandle: requireRole(["siswa"]),
+      detail: {
+        tags: ["Reviews"],
+        summary: "Tambah ulasan mata pelajaran",
+        description: "Rating 1–5. Hanya bisa dilakukan oleh siswa.",
+        security: [{ BearerAuth: [] }],
+      },
       body: t.Object({
         subjectId: t.String(),
         rating: t.Number({ minimum: 1, maximum: 5 }),
@@ -55,6 +61,11 @@ export const reviewsRoute = new Elysia({ prefix: "/api/v1/reviews" })
     },
     {
       beforeHandle: requireRole(["admin", "guru", "siswa"]),
+      detail: {
+        tags: ["Reviews"],
+        summary: "List ulasan berdasarkan mata pelajaran",
+        security: [{ BearerAuth: [] }],
+      },
       params: t.Object({
         subjectId: t.String(),
       }),
@@ -77,6 +88,11 @@ export const reviewsRoute = new Elysia({ prefix: "/api/v1/reviews" })
     },
     {
       beforeHandle: requireRole(["admin"]),
+      detail: {
+        tags: ["Reviews"],
+        summary: "Hapus ulasan",
+        security: [{ BearerAuth: [] }],
+      },
       params: t.Object({
         id: t.String(),
       }),
