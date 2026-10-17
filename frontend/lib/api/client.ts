@@ -68,17 +68,17 @@ function bearerHeader(token: string): Record<string, string> {
 
 export const api = {
   users: {
-    /** POST /api/users — register a new user */
+    /** POST /api/v1/users — register a new user */
     post: (body: RegisterRequest) =>
-      apiFetch<ApiSuccess<"OK">>("/api/users", {
+      apiFetch<ApiSuccess<"OK">>("/api/v1/users", {
         method: "POST",
         body: JSON.stringify(body),
       }),
 
     login: {
-      /** POST /api/users/login — login, returns session token */
+      /** POST /api/v1/users/login — login, returns session token */
       post: (body: LoginRequest) =>
-        apiFetch<LoginResponse>("/api/users/login", {
+        apiFetch<LoginResponse>("/api/v1/users/login", {
           method: "POST",
           body: JSON.stringify(body),
         }),
@@ -92,17 +92,17 @@ export function authApi(token: string) {
   return {
     users: {
       current: {
-        /** GET /api/users/current — get logged-in user info */
+        /** GET /api/v1/users/current — get logged-in user info */
         get: () =>
-          apiFetch<ApiSuccess<User>>("/api/users/current", {
+          apiFetch<ApiSuccess<User>>("/api/v1/users/current", {
             headers: bearerHeader(token),
           }),
       },
 
       logout: {
-        /** DELETE /api/users/logout — invalidate session */
+        /** DELETE /api/v1/users/logout — invalidate session */
         delete: () =>
-          apiFetch<ApiSuccess<"OK">>("/api/users/logout", {
+          apiFetch<ApiSuccess<"OK">>("/api/v1/users/logout", {
             method: "DELETE",
             headers: bearerHeader(token),
           }),
