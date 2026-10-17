@@ -1,6 +1,5 @@
 # dependencies (bun / npm / yarn / pnpm)
 node_modules
-drizzle-storage
 /.pnp
 .pnp.*
 .yarn/*
