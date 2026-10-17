@@ -5,7 +5,11 @@
   "private": true,
   "scripts": {
     "dev": "bun --watch src/index.ts",
-    "db:push": "bunx drizzle-kit up",
+    "db:generate": "drizzle-kit generate",
+    "db:generate:storage": "drizzle-kit generate --config=drizzle.storage.config.ts",
+    "db:migrate": "bun run src/db/migrate.ts",
+    "db:setup": "bun run db:migrate && bun run seed",
+    "db:push": "drizzle-kit push",
     "seed": "bun run src/db/seed.ts"
   },
   "devDependencies": {

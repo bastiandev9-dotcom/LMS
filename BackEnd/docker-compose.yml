@@ -12,6 +12,9 @@ services:
       - "5432:5432"
     volumes:
       - simanis_db_data:/var/lib/postgresql/data
+      # Script init hanya jalan saat volume masih kosong; membuat database
+      # storage_simanis otomatis (lihat initdb/01-create-storage-db.sql).
+      - ./initdb:/docker-entrypoint-initdb.d:ro
     restart: unless-stopped
 
 volumes:
