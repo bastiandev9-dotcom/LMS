@@ -1,5 +1,6 @@
 import {
   boolean,
+  date,
   index,
   integer,
   pgTable,
@@ -16,14 +17,49 @@ import { relations } from "drizzle-orm";
 export const users = pgTable("users", {
   id: uuid("id").defaultRandom().primaryKey(),
   fullName: varchar("full_name", { length: 255 }).notNull(),
-  email: varchar("email", { length: 255 }).notNull().unique(),
-  passwordHash: text("password_hash").notNull(),
+  // Email & password boleh kosong untuk siswa yang didaftarkan admin lewat
+  // roster: keduanya baru terisi saat siswa menyelesaikan aktivasi.
+  email: varchar("email", { length: 255 }).unique(),
+  passwordHash: text("password_hash"),
+  // NIS untuk siswa, NIP untuk guru. Dipakai sebagai identitas login
+  // alternatif email dan sebagai bahan password default.
+  nomorInduk: varchar("nomor_induk", { length: 50 }).unique(),
+  tanggalLahir: date("tanggal_lahir", { mode: "string" }),
+  kelas: varchar("kelas", { length: 50 }),
   phone: varchar("phone", { length: 50 }),
   avatarUrl: text("avatar_url"),
   isActive: boolean("is_active").default(true).notNull(),
+  // NULL berarti user wajib mengganti password (password default/awal).
+  passwordChangedAt: timestamp("password_changed_at"),
+  // Dinaikkan setiap password diganti/direset; token JWT dengan versi lama
+  // otomatis ditolak.
+  tokenVersion: integer("token_version").default(0).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+
+export const authTokens = pgTable(
+  "auth_tokens",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    // "activation" (aktivasi akun) | "password_reset" (lupa password).
+    type: varchar("type", { length: 30 }).notNull(),
+    // Hanya hash SHA-256 yang disimpan; token mentah hanya ada di email.
+    tokenHash: varchar("token_hash", { length: 64 }).notNull().unique(),
+    expiresAt: timestamp("expires_at").notNull(),
+    usedAt: timestamp("used_at"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    userTypeIdx: index("auth_token_user_type_idx").on(
+      table.userId,
+      table.type
+    ),
+  })
+);
 
 export const roles = pgTable("roles", {
   id: serial("id").primaryKey(),
@@ -148,6 +184,14 @@ export const usersRelations = relations(users, ({ many }) => ({
   userRoles: many(userRoles),
   subjectsCreated: many(subjects),
   modulesTaught: many(modules),
+  authTokens: many(authTokens),
+}));
+
+export const authTokensRelations = relations(authTokens, ({ one }) => ({
+  user: one(users, {
+    fields: [authTokens.userId],
+    references: [users.id],
+  }),
 }));
 
 export const rolesRelations = relations(roles, ({ many }) => ({
