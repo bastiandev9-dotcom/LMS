@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
@@ -108,12 +109,12 @@ export function LoginForm() {
             </h2>
             <p className="text-xs sm:text-sm text-slate-500 mt-1.5 leading-relaxed">
               Login menggunakan akun yang sudah terdaftar atau{" "}
-              <a
-                href="#"
+              <Link
+                href="/auth/register"
                 className="font-bold text-indigo-600 hover:underline"
               >
                 Create Account
-              </a>
+              </Link>
               .
             </p>
           </div>
@@ -188,12 +189,12 @@ export function LoginForm() {
             <ArrowRight className="size-3.5" />
           </motion.button>
           <div className="flex justify-start pt-1">
-            <a
-              href="#"
+            <Link
+              href="/auth/forgot-password"
               className="text-xs font-bold text-indigo-600 hover:text-indigo-700 hover:underline"
             >
               Lupa Password?
-            </a>
+            </Link>
           </div>
         </form>
       </StaggerItem>
@@ -211,13 +212,13 @@ export function LoginForm() {
                   Daftar akun baru untuk mengakses portal LMS SMK Mataram. Proses
                   registrasi cepat dan aman.
                 </p>
-                <a
+                <Link
                   href="/auth/register"
                   className="mt-3 inline-flex items-center gap-1.5 text-xs font-bold text-indigo-600 hover:text-indigo-700 transition"
                 >
                   Buat Akun Sekarang
                   <ArrowRight className="size-3.5" />
-                </a>
+                </Link>
               </div>
             </div>
           </div>
