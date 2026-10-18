@@ -3,6 +3,8 @@ import { cors } from "@elysiajs/cors";
 import { swagger } from "@elysiajs/swagger";
 import { jwt } from "@elysiajs/jwt";
 import { usersRoute } from "./routes/users-route";
+import { authRoute } from "./routes/auth-route";
+import { adminUsersRoute } from "./routes/admin-users-route";
 import { subjectsRoute } from "./routes/subjects-route";
 import { modulesRoute } from "./routes/modules-route";
 import { lessonsRoute } from "./routes/lessons-route";
@@ -23,10 +25,13 @@ REST API untuk platform manajemen pembelajaran SMK Mataram.
 Mendukung manajemen siswa, guru, mata pelajaran, modul, lesson, enrollment, review, notifikasi, progress, dan upload file.
 
 ### Autentikasi
-Gunakan \`POST /api/v1/users/login\` untuk mendapatkan JWT token, lalu klik tombol **Authorize 🔒** di atas dan masukkan:
+Gunakan \`POST /api/v1/auth/login\` (identifier = email atau nomor induk) untuk mendapatkan JWT token, lalu klik tombol **Authorize 🔒** di atas dan masukkan:
 \`\`\`
 Bearer <token>
 \`\`\`
+
+Registrasi mandiri hanya untuk siswa dan harus cocok dengan roster sekolah.
+Akun guru dibuat oleh admin melalui \`POST /api/v1/admin/users\`.
 
 ### Role
 | Role  | Keterangan            |
@@ -57,6 +62,7 @@ Bearer <token>
   security: [{ BearerAuth: [] }],
   tags: [
     { name: "Auth", description: "Registrasi, login, profil, dan logout" },
+    { name: "Admin", description: "Manajemen akun guru & siswa (admin)" },
     { name: "Subjects", description: "Manajemen mata pelajaran" },
     { name: "Modules", description: "Manajemen modul dalam mata pelajaran" },
     { name: "Lessons", description: "Manajemen lesson dalam modul" },
@@ -80,6 +86,8 @@ const app = new Elysia()
   )
   .get("/", () => ({ status: "ok" }))
   .use(usersRoute)
+  .use(authRoute)
+  .use(adminUsersRoute)
   .use(subjectsRoute)
   .use(modulesRoute)
   .use(lessonsRoute)

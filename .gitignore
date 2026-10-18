@@ -59,3 +59,6 @@ yarn-error.log*
 # AI Agent Tasks
 tasks/
 
+
+# database backups
+BackEnd/backups/

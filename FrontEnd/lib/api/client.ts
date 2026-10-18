@@ -5,8 +5,8 @@
  *   import { api, authApi } from "@/lib/api/client"
  *
  *   // Public routes (no auth)
- *   const { data, error } = await api.users.post({ name, email, password })
- *   const { data, error } = await api.users.login.post({ email, password })
+ *   const { data, error } = await api.auth.login.post({ identifier, password })
+ *   const { data, error } = await api.auth.register.post({ email, nomor_induk, tanggal_lahir })
  *
  *   // Protected routes (requires Bearer token)
  *   const { data, error } = await authApi(token).users.current.get()
@@ -17,7 +17,9 @@ import type {
   RegisterRequest,
   LoginRequest,
   LoginResponse,
+  ChangePasswordRequest,
   ApiSuccess,
+  ApiMessage,
   ApiError,
   User,
 } from "./types";
@@ -67,22 +69,41 @@ function bearerHeader(token: string): Record<string, string> {
 // ─── Public API (no auth) ────────────────────────────────────────────────────
 
 export const api = {
-  users: {
-    /** POST /api/v1/users — register a new user */
-    post: (body: RegisterRequest) =>
-      apiFetch<ApiSuccess<"OK">>("/api/v1/users", {
+  auth: {
+    /** POST /api/v1/auth/register — registrasi siswa (link aktivasi dikirim via email) */
+    register: (body: RegisterRequest) =>
+      apiFetch<ApiMessage>("/api/v1/auth/register", {
         method: "POST",
         body: JSON.stringify(body),
       }),
 
-    login: {
-      /** POST /api/v1/users/login — login, returns session token */
-      post: (body: LoginRequest) =>
-        apiFetch<LoginResponse>("/api/v1/users/login", {
-          method: "POST",
-          body: JSON.stringify(body),
-        }),
-    },
+    /** POST /api/v1/auth/activate — buat password dari token email aktivasi */
+    activate: (body: { token: string; password: string }) =>
+      apiFetch<ApiSuccess<User>>("/api/v1/auth/activate", {
+        method: "POST",
+        body: JSON.stringify(body),
+      }),
+
+    /** POST /api/v1/auth/login — login dengan email atau nomor induk */
+    login: (body: LoginRequest) =>
+      apiFetch<LoginResponse>("/api/v1/auth/login", {
+        method: "POST",
+        body: JSON.stringify(body),
+      }),
+
+    /** POST /api/v1/auth/forgot-password — kirim tautan reset ke email */
+    forgotPassword: (body: { identifier: string }) =>
+      apiFetch<ApiMessage>("/api/v1/auth/forgot-password", {
+        method: "POST",
+        body: JSON.stringify(body),
+      }),
+
+    /** POST /api/v1/auth/reset-password — buat password baru dari token email */
+    resetPassword: (body: { token: string; password: string }) =>
+      apiFetch<ApiMessage>("/api/v1/auth/reset-password", {
+        method: "POST",
+        body: JSON.stringify(body),
+      }),
   },
 } as const;
 
@@ -90,6 +111,18 @@ export const api = {
 
 export function authApi(token: string) {
   return {
+    auth: {
+      changePassword: {
+        /** PUT /api/v1/auth/password — ganti password, mengembalikan token baru */
+        put: (body: ChangePasswordRequest) =>
+          apiFetch<LoginResponse>("/api/v1/auth/password", {
+            method: "PUT",
+            headers: bearerHeader(token),
+            body: JSON.stringify(body),
+          }),
+      },
+    },
+
     users: {
       current: {
         /** GET /api/v1/users/current — get logged-in user info */
