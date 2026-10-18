@@ -11,10 +11,13 @@ export interface User {
   id: string;
   name: string;
   full_name: string;
-  email: string;
+  email: string | null;
+  nomor_induk: string | null;
+  kelas: string | null;
   phone: string | null;
   avatar_url: string | null;
   is_active: boolean;
+  must_change_password: boolean;
   role: UserRole;
   created_at: string;
   updated_at: string;
@@ -22,26 +25,45 @@ export interface User {
 
 // ─── Request / Response shapes ───────────────────────────────────────────────
 
+/**
+ * Registrasi mandiri hanya untuk siswa dan harus cocok dengan roster
+ * yang diimpor admin (nomor induk + tanggal lahir).
+ */
 export interface RegisterRequest {
-  name: string;
   email: string;
-  password: string;
-  role?: UserRole;
+  nomor_induk: string;
+  tanggal_lahir: string; // YYYY-MM-DD
 }
 
+/** `identifier` = email terdaftar atau nomor induk (NIS/NIP). */
 export interface LoginRequest {
-  email: string;
+  identifier: string;
   password: string;
 }
 
 export interface LoginResponse {
-  data: string; // Bearer token (UUID)
+  data: string; // Bearer token
+  must_change_password?: boolean;
+  success?: boolean;
+  message?: string;
+}
+
+export interface ChangePasswordRequest {
+  current_password: string;
+  new_password: string;
 }
 
 export interface ApiSuccess<T> {
   data: T;
 }
 
+export interface ApiMessage {
+  success: boolean;
+  message: string;
+}
+
 export interface ApiError {
-  error: string;
+  error?: string;
+  message?: string;
+  code?: string;
 }

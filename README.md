@@ -139,35 +139,114 @@ Kalau DBeaver masih hanya menampilkan satu database, aktifkan opsi **Show all da
 
 ## API Endpoints
 
-### Auth — `/api/users`
+### Auth — `/api/v1/auth`
 
 | Method | Endpoint | Auth | Keterangan |
 |---|---|---|---|
-| `GET` | `/` | — | Health check |
-| `POST` | `/api/users` | — | Register user baru |
-| `POST` | `/api/users/login` | — | Login → JWT token |
-| `GET` | `/api/users/current` | Bearer | Data user aktif |
-| `DELETE` | `/api/users/logout` | Bearer | Logout (stateless) |
+| `POST` | `/api/v1/auth/register` | — | Registrasi siswa (wajib cocok dengan roster admin) |
+| `POST` | `/api/v1/auth/activate` | — | Aktivasi akun + buat password dari token email |
+| `POST` | `/api/v1/auth/login` | — | Login (`identifier` = email atau nomor induk) → JWT |
+| `POST` | `/api/v1/auth/forgot-password` | — | Kirim tautan reset ke email |
+| `POST` | `/api/v1/auth/reset-password` | — | Buat password baru dari token email |
+| `PUT` | `/api/v1/auth/password` | Bearer | Ganti password (password lama wajib benar) |
+| `GET` | `/api/v1/users/current` | Bearer | Data user aktif |
+| `DELETE` | `/api/v1/users/logout` | Bearer | Logout (hapus token di klien) |
 
-### Subjects — `/api/subjects`
+### Admin — `/api/v1/admin/users` (khusus admin)
+
+| Method | Endpoint | Keterangan |
+|---|---|---|
+| `POST` | `/api/v1/admin/users` | Buat satu akun guru/siswa (langsung aktif, password default) |
+| `POST` | `/api/v1/admin/users/import` | Impor roster siswa (atau langsung aktifkan) |
+| `GET` | `/api/v1/admin/users/roster` | Siswa yang belum menyelesaikan aktivasi |
+| `POST` | `/api/v1/admin/users/:id/activate` | Aktifkan siswa roster dengan password default |
+| `POST` | `/api/v1/admin/users/:id/reset-password` | Reset password user ke password default |
+
+### Subjects — `/api/v1/subjects`
 
 | Method | Endpoint | Auth | Keterangan |
 |---|---|---|---|
-| `POST` | `/api/subjects` | admin, guru | Buat mata pelajaran |
-| `GET` | `/api/subjects` | semua | List mata pelajaran |
-| `PUT` | `/api/subjects/:id` | admin | Update mata pelajaran |
-| `DELETE` | `/api/subjects/:id` | admin | Hapus mata pelajaran |
+| `POST` | `/api/v1/subjects` | admin, guru | Buat mata pelajaran |
+| `GET` | `/api/v1/subjects` | semua | List mata pelajaran |
+| `PUT` | `/api/v1/subjects/:id` | admin | Update mata pelajaran |
+| `DELETE` | `/api/v1/subjects/:id` | admin | Hapus mata pelajaran |
 
-### Modules — `/api/modules`
+### Modules — `/api/v1/modules`
 
 | Method | Endpoint | Auth | Keterangan |
 |---|---|---|---|
-| `POST` | `/api/modules` | admin, guru | Buat modul |
-| `GET` | `/api/modules` | semua | List modul (filter `?subject_id=`) |
-| `PUT` | `/api/modules/:id` | admin, guru pemilik | Update modul |
-| `DELETE` | `/api/modules/:id` | admin, guru pemilik | Hapus modul |
+| `POST` | `/api/v1/modules` | admin, guru | Buat modul |
+| `GET` | `/api/v1/modules` | semua | List modul (filter `?subject_id=`) |
+| `PUT` | `/api/v1/modules/:id` | admin, guru pemilik | Update modul |
+| `DELETE` | `/api/v1/modules/:id` | admin, guru pemilik | Hapus modul |
 
 > Role yang tersedia: `admin` \| `guru` \| `siswa`
+
+---
+
+## Autentikasi & Akun
+
+### Login
+
+Login memakai salah satu identitas:
+
+- **email** terdaftar, atau
+- **nomor induk** — NIS untuk siswa, NIP untuk guru.
+
+```json
+POST /api/v1/auth/login
+{ "identifier": "1023014587", "password": "15082010999" }
+```
+
+Role **selalu dibaca dari database**, tidak pernah dari input klien. JWT berlaku 7 hari dan membawa `tv` (token version); setiap password diganti/direset, versi naik dan semua token lama otomatis ditolak.
+
+### Siapa yang boleh mendaftar
+
+| Jalur | Siapa | Cara |
+|---|---|---|
+| Publik | **Siswa saja** | `POST /api/v1/auth/register` — hanya berhasil jika NIS + tanggal lahir cocok dengan roster yang diimpor admin |
+| Admin | Guru & siswa | `POST /api/v1/admin/users` atau `POST /api/v1/admin/users/import` |
+
+Tidak ada endpoint publik yang menerima field `role`; akun guru tidak bisa dibuat lewat registrasi mandiri.
+
+### Password awal (tanpa input satu per satu)
+
+Akun yang dibuat admin langsung aktif dengan password default yang diturunkan dari data siswa:
+
+```
+DDMMYYYY + 3 digit terakhir nomor induk
+```
+
+Contoh: lahir **15 Agustus 2010**, NIS `...4587` → `150820104587`.
+Admin tidak perlu mengetik password; nilai yang sama dikembalikan pada response pembuatan/import untuk dibagikan ke siswa.
+
+Password ini hanya berlaku sampai login pertama. Selama `password_changed_at` masih kosong, backend menolak semua endpoint selain ganti password & data sesi dengan `403 password_change_required`, sehingga siswa wajib membuat password sendiri.
+
+### Dua alur akun siswa
+
+1. **Roster + aktivasi mandiri** — admin mengimpor daftar siswa (`activate: false`). Siswa mendaftar dengan NIS + tanggal lahir + email, lalu membuka tautan aktivasi dari email untuk membuat password.
+2. **Langsung aktif** — admin mengimpor dengan `activate: true` (atau membuat satu akun). Siswa login memakai password default, lalu wajib menggantinya.
+
+### Lupa password
+
+`POST /api/v1/auth/forgot-password` mengirim tautan reset (berlaku 1 jam, sekali pakai) ke email pemilik akun. Respons selalu sama agar keberadaan akun tidak bocor. Admin juga dapat mereset password user ke password default lewat `POST /api/v1/admin/users/:id/reset-password`.
+
+### Konfigurasi email
+
+Email dipakai untuk tautan aktivasi & reset. Isi `.env`:
+
+```bash
+APP_URL=http://localhost:3001        # base URL frontend untuk tautan email
+
+# Opsi budget 0: Gmail app-password (~500 email/hari) atau Brevo free (~300/hari)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=akun.sekolah@gmail.com
+SMTP_PASS=app-password-16-digit
+SMTP_FROM="SiManis LMS <akun.sekolah@gmail.com>"
+```
+
+Untuk development tanpa akun SMTP, set `MAIL_DEV=true` — tautan aktivasi/reset dicetak ke console server sehingga alur tetap bisa diuji.
 
 ---
 
@@ -251,6 +330,23 @@ Untuk tabel storage (`src/db/storage-schema.ts`), langkah 1 diganti dengan `bun 
 
 `bun run db:push` hanya untuk eksperimen lokal: ia menyamakan database langsung tanpa menghasilkan file migrasi, sehingga tidak bisa direproduksi di mesin lain. Jangan dipakai sebagai alur utama.
 
+### Backup database
+
+```bash
+cd BackEnd
+bun run db:backup
+# -> backups/simanis-YYYYMMDD-HHMMSS.dump
+# -> backups/storage_simanis-YYYYMMDD-HHMMSS.dump
+```
+
+Backup memakai `pg_dump -Fc` dari container PostgreSQL. Restore:
+
+```bash
+docker exec -i simanis-db pg_restore -U postgres -d simanis --clean --if-exists < backups/simanis-YYYYMMDD-HHMMSS.dump
+```
+
+Folder `BackEnd/backups/` tidak ikut di-commit.
+
 ---
 
 ## Scripts
@@ -264,6 +360,7 @@ Untuk tabel storage (`src/db/storage-schema.ts`), langkah 1 diganti dengan `bun 
 | `bun run db:generate` | Buat file migrasi baru dari `src/db/schema.ts` |
 | `bun run db:generate:storage` | Buat file migrasi baru dari `src/db/storage-schema.ts` |
 | `bun run db:setup` | `db:migrate` lalu `seed` |
+| `bun run db:backup` | Backup `simanis` + `storage_simanis` ke `BackEnd/backups/` |
 | `bun run db:push` | Push schema langsung tanpa file migrasi (dev cepat) |
 | `bun run seed` | Isi data awal ke database |
 
@@ -320,10 +417,13 @@ feature/nama-fitur  →  dev  →  staging  →  main
 ## Troubleshooting
 
 - **`DATABASE_URL is not defined`** → Pastikan file `.env` sudah ada dan `DATABASE_URL` terisi dengan benar.
-- **`bun run db:push` gagal** → Cek koneksi database, pastikan host & password Supabase sudah benar.
+- **`bun run db:push` gagal** → Cek koneksi database, pastikan host & password PostgreSQL sudah benar.
 - **`JWT_SECRET` kosong** → Wajib diisi, server tidak bisa berjalan tanpa ini.
 - **Port 3000 sudah dipakai** → Ganti `PORT` di `.env` (misal `PORT=3001`).
-- **Token masih valid setelah logout** → Normal — auth menggunakan JWT stateless, logout hanya menghapus token di sisi klien.
+- **Token masih valid setelah logout** → Normal — logout hanya menghapus token di klien. Token otomatis dicabut saat password diganti/direset.
+- **`403 password_change_required`** → Akun masih memakai password awal. Ganti lewat `PUT /api/v1/auth/password` (halaman `/auth/change-password` di frontend).
+- **Tautan aktivasi/reset tidak masuk email** → Untuk development set `MAIL_DEV=true` dan lihat console server. Untuk produksi, cek `SMTP_HOST`/`SMTP_USER`/`SMTP_PASS` dan folder spam.
+- **Login gagal padahal password default benar** → Pastikan tanggal lahir di data sekolah berformat `YYYY-MM-DD` dan nomor induk minimal 3 digit; password = `DDMMYYYY` + 3 digit terakhir nomor induk.
 
 ---
 

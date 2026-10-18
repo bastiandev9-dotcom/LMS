@@ -1,5 +1,14 @@
 import { Elysia } from "elysia";
-import { getCurrentUserById } from "../services/users-services";
+import { canonicalRole } from "../services/role-service";
+import { getSessionUserById } from "../services/users-services";
+
+// Endpoint yang tetap boleh diakses saat user masih memakai password
+// default (password_changed_at NULL).
+const MUST_CHANGE_ALLOWED_PATHS = new Set([
+  "/api/v1/auth/password",
+  "/api/v1/users/current",
+  "/api/v1/users/logout",
+]);
 
 // Plugin Elysia (pola fungsi) yang memvalidasi JWT dari header
 // `Authorization: Bearer <token>` dan menginjeksi { user, session }
@@ -8,7 +17,7 @@ import { getCurrentUserById } from "../services/users-services";
 export const authMiddleware = (app: Elysia) =>
   // `jwt` didekorasikan oleh plugin @elysiajs/jwt di src/index.ts;
   // diketik `any` karena instance route didefinisikan standalone.
-  app.derive(async ({ headers, status, jwt }: any) => {
+  app.derive(async ({ headers, status, jwt, request }: any) => {
     const authorization: unknown = headers["authorization"];
     if (typeof authorization !== "string" || !authorization.startsWith("Bearer ")) {
       throw status(401, { error: "Unauthorized" });
@@ -25,9 +34,31 @@ export const authMiddleware = (app: Elysia) =>
     }
 
     try {
-      const user = await getCurrentUserById(String(payload.sub));
+      const user = await getSessionUserById(String(payload.sub));
+
+      // Token lama (tanpa tv) dan token yang diterbitkan sebelum password
+      // diganti/direset langsung ditolak.
+      if (typeof payload.tv !== "number" || payload.tv !== user.tokenVersion) {
+        throw status(401, {
+          error: "Sesi berakhir. Silakan login kembali.",
+        });
+      }
+
+      if (
+        user.must_change_password &&
+        !MUST_CHANGE_ALLOWED_PATHS.has(new URL(request.url).pathname)
+      ) {
+        throw status(403, {
+          error: "Password harus diganti terlebih dahulu",
+          code: "password_change_required",
+        });
+      }
+
+      // tokenVersion hanya untuk pengecekan internal, tidak diekspos ke route.
+      const { tokenVersion: _tokenVersion, ...publicUser } = user;
+
       return {
-        user,
+        user: publicUser,
         session: { token },
       };
     } catch (err) {
@@ -38,22 +69,14 @@ export const authMiddleware = (app: Elysia) =>
     }
   });
 
-const ROLE_ALIASES: Record<string, string> = {
-  teacher: "guru",
-  student: "siswa",
-};
-
-export function canonicalRole(role: unknown): string {
-  const name = typeof role === "string" ? role : "";
-  return ROLE_ALIASES[name] ?? name;
-}
-
 // Role guard (wajib dipasang setelah authMiddleware): 403 bila role user di luar allowedRoles.
 export function requireRole(allowedRoles: string[]) {
-  const allowed = new Set(allowedRoles.map((r) => canonicalRole(r)));
+  const allowed = new Set(allowedRoles.map((role) => canonicalRole(role)));
   return ({ user, status }: any) => {
     if (!user || !allowed.has(canonicalRole(user.role))) {
       throw status(403, { error: "Akses ditolak: Peran tidak valid" });
     }
   };
 }
+
+export { canonicalRole } from "../services/role-service";

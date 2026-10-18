@@ -38,17 +38,26 @@ export class NotFoundError extends Error {
   }
 }
 
+export class TooManyRequestsError extends Error {
+  readonly statusCode = 429 as const;
+  constructor(message = "Terlalu banyak percobaan") {
+    super(message);
+    this.name = "TooManyRequestsError";
+  }
+}
+
 // ─── Central Error Handler ────────────────────────────────────────────────────
 
 export function handleError(error: unknown): {
-  status: 400 | 401 | 403 | 404 | 500;
+  status: 400 | 401 | 403 | 404 | 429 | 500;
   message: string;
 } {
   if (
     error instanceof BadRequestError ||
     error instanceof UnauthorizedError ||
     error instanceof ForbiddenError ||
-    error instanceof NotFoundError
+    error instanceof NotFoundError ||
+    error instanceof TooManyRequestsError
   ) {
     return { status: error.statusCode, message: error.message };
   }
