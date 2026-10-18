@@ -4,7 +4,15 @@ import type { NextRequest } from "next/server";
 const TOKEN_COOKIE = "lms_token";
 
 const PROTECTED_PREFIXES = ["/admin", "/teacher", "/student"];
-const AUTH_PAGES = ["/auth/login", "/auth/register", "/login", "/register"];
+const AUTH_PAGES = [
+  "/auth/login",
+  "/auth/register",
+  "/auth/activate",
+  "/auth/forgot-password",
+  "/auth/reset-password",
+  "/login",
+  "/register",
+];
 
 const ROLE_HOME: Record<string, string> = {
   admin: "/admin/dashboard",
