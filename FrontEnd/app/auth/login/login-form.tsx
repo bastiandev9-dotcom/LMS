@@ -32,13 +32,13 @@ export function LoginForm() {
 
     setLoading(true);
     try {
-      const { data, error } = await api.users.login.post({
-        email: username,
+      const { data, error } = await api.auth.login({
+        identifier: username,
         password,
       });
 
       if (error) {
-        toast.error(error.error || "Login gagal");
+        toast.error(error.error || error.message || "Login gagal");
         setLoading(false);
         return;
       }
@@ -62,6 +62,14 @@ export function LoginForm() {
 
       const user = currentData.data;
       useAuthStore.getState().setAuth(token, user);
+
+      // Akun dengan password awal wajib mengganti password sebelum
+      // mengakses fitur lain (dijaga juga di backend).
+      if (data.must_change_password || user.must_change_password) {
+        toast.info("Ganti password awal sebelum melanjutkan.");
+        router.push("/auth/change-password");
+        return;
+      }
 
       toast.success("Login berhasil — menyambungkan ke portal…");
 
