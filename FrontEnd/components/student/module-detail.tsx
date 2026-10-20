@@ -3,7 +3,6 @@
 import { useState } from "react";
 import {
   AlarmClock,
-  BadgeCheck,
   BookOpen,
   Check,
   CheckCheck,
@@ -11,7 +10,6 @@ import {
   ChevronRight,
   Code,
   ExternalLink,
-  Eye,
   FileText,
   FolderArchive,
   GraduationCap,
@@ -74,8 +72,6 @@ const sessions = [
   },
 ];
 
-const quizWrong = 14;
-
 function CompletionGauge() {
   const ref = useRef<SVGPathElement>(null);
   const isInView = useInView(ref as React.RefObject<Element>, { once: true, margin: "-40px" });
@@ -94,16 +90,16 @@ function CompletionGauge() {
           d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
           fill="none"
           stroke="#0d5c52"
-          strokeDasharray="75, 100"
+          strokeDasharray="100, 100"
           strokeLinecap="round"
           strokeWidth="3.5"
           initial={{ pathLength: 0, opacity: 0 }}
-          animate={isInView ? { pathLength: 0.75, opacity: 1 } : { pathLength: 0, opacity: 0 }}
+          animate={isInView ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
           transition={{ duration: 1.2, delay: 0.2, ease: "easeOut" }}
         />
       </svg>
       <div className="absolute flex flex-col items-center">
-        <span className="text-[20px] leading-7 font-bold text-[#071f1c]">75%</span>
+        <span className="text-[20px] leading-7 font-bold text-[#071f1c]">100%</span>
         <span className="text-[10px] font-semibold text-[#536360]">Kesiapan</span>
       </div>
     </div>
@@ -135,24 +131,8 @@ export function StudentModuleDetail() {
               Modules
             </a>
             <ChevronRight className="size-3.5 text-[#bec9c5]" />
-            <a href="/student/modules" className="hover:text-[#0d5c52] transition-colors">
-              Informatika &amp; Sains Komputasi
-            </a>
-            <ChevronRight className="size-3.5 text-[#bec9c5]" />
-            <span className="text-[#0d5c52] font-bold">Modul 04 Dijkstra</span>
+            <span className="text-[#0d5c52]">Informatika &amp; Sains Komputasi</span>
           </nav>
-          <motion.button
-            type="button"
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={() =>
-              alert("Arsip berkas modul (.zip) sedang disiapkan. Fitur unduh aktif setelah integrasi backend.")
-            }
-            className="flex items-center gap-1.5 px-4 py-1.5 bg-white text-[#0d5c52] rounded-xl text-[13px] font-semibold shadow-sm hover:bg-[#d4eee7] transition-colors self-start md:self-auto border border-[#cee8e1]/60"
-          >
-            <FolderArchive className="size-[18px]" />
-            Unduh Semua Berkas (.zip)
-          </motion.button>
         </div>
 
         {/* Hero Module Header */}
@@ -161,7 +141,7 @@ export function StudentModuleDetail() {
           <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             <div className="flex flex-col gap-2 max-w-3xl">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="px-2 py-0.5 rounded-full bg-[#abf0e2] text-[#00513a] text-[11px] font-semibold">
+                <span className="px-2 py-0.5 rounded-full bg-[#d4eee7] text-[#0d5c52] text-[11px] font-semibold">
                   Fase F • Kelas XII MIPA 1
                 </span>
                 <span className="px-2 py-0.5 rounded-full bg-[#d4eee7] text-[#071f1c] text-[11px] font-semibold">
@@ -172,8 +152,8 @@ export function StudentModuleDetail() {
                   Status: Sedang Berjalan (75% Selesai)
                 </span>
               </div>
-              <h2 className="text-[26px] leading-[34px] font-bold text-[#071f1c] tracking-tight mt-1">
-                Modul 04: Algoritma Graf Dijkstra &amp; Optimasi Jalur Jaringan Komputer
+              <h2 className="text-[30px] leading-[38px] font-bold text-[#071f1c] tracking-tight mt-1">
+                Informatika &amp; Sains Komputasi
               </h2>
               <p className="text-[14px] leading-relaxed text-[#3f4946] max-w-2xl">
                 Eksplorasi representasi adjacency matrix, relaksasi simpul berbasis antrean
@@ -211,9 +191,9 @@ export function StudentModuleDetail() {
               <CompletionGauge />
               <div className="text-center">
                 <span className="text-[13px] font-semibold text-[#071f1c] block">
-                  3 dari 4 Bab Tuntas
+                  4 dari 4 Bab Tuntas
                 </span>
-                <span className="text-[12px] text-[#536360]">Estimasi sisa: 45 Menit</span>
+                <span className="text-[12px] text-[#536360]">Estimasi sisa: Selesai</span>
               </div>
             </div>
           </div>
@@ -265,15 +245,15 @@ export function StudentModuleDetail() {
               </div>
               <div>
                 <span className="text-[15px] leading-[22px] font-bold text-[#071f1c]">
-                  3 dari 4 Bab
+                  3 dari 3 Bab
                 </span>
-                <p className="text-[12px] text-[#536360] mt-0.5">75% Materi Terserap</p>
+                <p className="text-[12px] text-[#536360] mt-0.5">100% Materi Terserap</p>
               </div>
               <div className="w-full bg-[#d4eee7] h-2 rounded-full overflow-hidden">
                 <motion.div
                   className="bg-[#0d5c52] h-full rounded-full"
                   initial={{ width: 0 }}
-                  whileInView={{ width: "75%" }}
+                  whileInView={{ width: "100%" }}
                   viewport={{ once: true }}
                   transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
                 />
@@ -351,7 +331,7 @@ export function StudentModuleDetail() {
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
                   onClick={() => setTab(t.key)}
-                  className={`flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-[13px] font-semibold transition-colors ${
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-[14px] font-semibold transition-colors ${
                     tab === t.key
                       ? "bg-[#d4eee7] text-[#0d5c52]"
                       : "text-[#536360] hover:bg-[#edf7f4]"
@@ -622,40 +602,6 @@ export function StudentModuleDetail() {
                     </div>
                   </motion.div>
                   </StaggerItem>
-
-                  <StaggerItem className="md:col-span-2">
-                  <motion.div
-                    whileHover={{ y: -3 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 24 }}
-                    className="flex flex-col sm:flex-row items-center justify-between p-4 rounded-xl bg-[#d4eee7] gap-4"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-[#0d5c52] text-white flex items-center justify-center">
-                        <Code className="size-6" />
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-[14px] font-semibold text-[#071f1c]">
-                          Bab 4: Jupyter Notebook Praktikum: shortest_path_routing_sim.ipynb
-                        </span>
-                        <span className="text-[12px] text-[#536360]">
-                          Berkas praktikum interaktif siap dieksekusi di cloud environment
-                        </span>
-                      </div>
-                    </div>
-                    <motion.button
-                      type="button"
-                      whileHover={{ scale: 1.03 }}
-                      whileTap={{ scale: 0.97 }}
-                      onClick={() =>
-                        alert("Membuka Google Colab. Fitur integrasi Colab aktif setelah integrasi backend.")
-                      }
-                      className="flex items-center gap-1.5 px-4 py-1.5 bg-[#0d5c52] text-white rounded-xl text-[13px] font-semibold hover:bg-[#00433b] transition-colors whitespace-nowrap shadow-sm"
-                    >
-                      <ExternalLink className="size-[18px]" />
-                      Buka di Google Colab
-                    </motion.button>
-                  </motion.div>
-                  </StaggerItem>
                 </StaggerChildren>
               </motion.div>
             )}
@@ -706,35 +652,19 @@ export function StudentModuleDetail() {
                       Draft Tersimpan
                     </span>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                      <div className="flex items-center gap-1.5 truncate">
-                        <Code className="size-5 text-[#0d5c52] shrink-0" />
-                        <div className="flex flex-col truncate">
-                          <span className="text-[11px] font-semibold text-[#071f1c] truncate">
-                            algoritma_dijkstra_pawell_v2.ipynb
-                          </span>
-                          <span className="text-[10px] text-[#536360]">
-                            1.8 MB • Diunggah 18 Maret
-                          </span>
-                        </div>
+                  <div className="flex items-center justify-between p-2 bg-white rounded-lg">
+                    <div className="flex items-center gap-1.5 truncate">
+                      <Code className="size-5 text-[#0d5c52] shrink-0" />
+                      <div className="flex flex-col truncate">
+                        <span className="text-[11px] font-semibold text-[#071f1c] truncate">
+                          algoritma_dijkstra_pawell_v2.zip
+                        </span>
+                        <span className="text-[10px] text-[#536360]">
+                          1.8 MB • Diunggah 18 Maret
+                        </span>
                       </div>
-                      <CheckCircle2 className="size-[18px] text-[#14b8a6] shrink-0" />
                     </div>
-                    <div className="flex items-center justify-between p-2 bg-white rounded-lg">
-                      <div className="flex items-center gap-1.5 truncate">
-                        <FileText className="size-5 text-[#0d5c52] shrink-0" />
-                        <div className="flex flex-col truncate">
-                          <span className="text-[11px] font-semibold text-[#071f1c] truncate">
-                            laporan_analisis_latency.pdf
-                          </span>
-                          <span className="text-[10px] text-[#536360]">
-                            3.2 MB • Diunggah 18 Maret
-                          </span>
-                        </div>
-                      </div>
-                      <CheckCircle2 className="size-[18px] text-[#14b8a6] shrink-0" />
-                    </div>
+                    <CheckCircle2 className="size-[18px] text-[#14b8a6] shrink-0" />
                   </div>
 
                   <div className="flex flex-col gap-1 pt-1">
@@ -769,26 +699,30 @@ export function StudentModuleDetail() {
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={() =>
-                        alert("Tugas Praktikum 04 berhasil dikirim (finalisasi). Fitur pengumpulan aktif setelah integrasi backend.")
+                        alert("Formulir unggah berkas dibuka. Fitur unggah aktif setelah integrasi backend.")
                       }
-                      className="w-full sm:flex-1 py-2 px-4 bg-[#0d5c52] hover:bg-[#00433b] text-white text-[14px] font-semibold rounded-xl shadow-md transition-colors flex items-center justify-center gap-2"
+                      className="w-full sm:flex-1 py-2 px-4 bg-white text-[#0d5c52] text-[14px] font-semibold rounded-xl hover:bg-[#edf7f4] transition-colors flex items-center justify-center gap-2 shadow-sm border border-[#cee8e1]/60"
                     >
-                      <Send className="size-5" />
-                      Kirim Tugas Sekarang (Finalisasi)
+                      <CloudUpload className="size-5" />
+                      Unggah Berkas
                     </motion.button>
                     <motion.button
                       type="button"
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={() =>
-                        alert("Formulir unggah ulang berkas dibuka. Fitur unggah aktif setelah integrasi backend.")
+                        alert("Tugas Praktikum 04 berhasil dikirim (finalisasi). Fitur pengumpulan aktif setelah integrasi backend.")
                       }
-                      className="w-full sm:w-auto py-2 px-4 bg-white text-[#0d5c52] text-[13px] font-semibold rounded-xl hover:bg-[#edf7f4] transition-colors flex items-center justify-center gap-1 shadow-sm border border-[#cee8e1]/60"
+                      className="w-full sm:flex-[2] py-2 px-4 bg-[#0d5c52] hover:bg-[#00433b] text-white text-[14px] font-semibold rounded-xl shadow-md transition-colors flex items-center justify-center gap-2"
                     >
-                      <CloudUpload className="size-[18px]" />
-                      Unggah Ulang Berkas
+                      <Send className="size-5" />
+                      Kirim Tugas Sekarang (Finalisasi)
                     </motion.button>
                   </div>
+                  <span className="text-[11px] text-[#536360] flex items-center gap-1">
+                    <Info className="size-[14px] shrink-0" />
+                    Format berkas: .pdf, .zip, .rar (Maks. 25 MB)
+                  </span>
                 </div>
               </motion.div>
             )}
@@ -803,96 +737,111 @@ export function StudentModuleDetail() {
                 transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
                 className="flex flex-col gap-4 bg-white p-6 rounded-2xl shadow-[0_2px_8px_-2px_rgba(13,92,82,0.05)] border border-[#cee8e1]/60"
               >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-[20px] leading-7 text-[#071f1c] font-semibold">
-                      Kuis Formatif Modul 04: Logika Algoritma &amp; Kompleksitas
-                    </h3>
-                    <p className="text-[12px] text-[#536360]">
-                      Evaluasi pemahaman konsep traversal simpul dan pemilihan struktur data antrean
-                    </p>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-start gap-3">
+                    <span className="p-2 rounded-lg bg-[#d4eee7] text-[#0d5c52] flex items-center justify-center shrink-0">
+                      <FileText className="size-5" />
+                    </span>
+                    <div>
+                      <h3 className="text-[20px] leading-7 text-[#071f1c] font-semibold">
+                        Kuis Formatif Modul 04: Logika Algoritma &amp; Kompleksitas
+                      </h3>
+                      <p className="text-[12px] text-[#536360]">
+                        Evaluasi formatif terintegrasi Google Workspace for Education (SSO SMK
+                        Mataram)
+                      </p>
+                    </div>
                   </div>
-                  <span className="px-4 py-1 rounded-full bg-[#a6f2cf] text-[#00513a] text-[11px] font-bold self-start">
+                  <span className="px-4 py-1 rounded-full bg-[#a6f2cf] text-[#00513a] text-[11px] font-bold self-start whitespace-nowrap">
                     TUNTAS (KKM: 78.00)
                   </span>
                 </div>
 
-                <div className="p-6 rounded-xl bg-[#d4eee7] flex flex-col sm:flex-row items-center justify-between gap-4">
-                  <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 rounded-2xl bg-[#0d5c52] text-white flex flex-col items-center justify-center shadow-md">
-                      <span className="text-[26px] leading-8 font-bold">95</span>
-                      <span className="text-[10px] font-semibold uppercase">Nilai Akhir</span>
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-[15px] font-semibold text-[#071f1c]">
-                        Percobaan ke-2 Berhasil Maksimal!
+                <div className="p-4 rounded-xl bg-[#edf7f4] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                  <div className="flex items-start gap-3">
+                    <span className="w-12 h-12 rounded-xl bg-white text-[#0d5c52] flex items-center justify-center shrink-0 shadow-sm">
+                      <FileText className="size-6" />
+                    </span>
+                    <div className="flex flex-col gap-1">
+                      <h4 className="text-[15px] font-semibold text-[#071f1c]">
+                        Kuis Formatif Dikerjakan via Google Forms
+                      </h4>
+                      <span className="px-2 py-0.5 rounded-full bg-[#a6f2cf] text-[#00513a] text-[10px] font-semibold self-start">
+                        Tautan Aktif &amp; Terbuka
                       </span>
-                      <span className="text-[12px] text-[#536360]">
-                        Percobaan 1: 85/100 • Percobaan 2: 95/100 (Skor Tertinggi Digunakan)
-                      </span>
+                      <p className="text-[12px] text-[#536360]">
+                        Pengerjaan kuis menggunakan formulir resmi. Respons hanya dapat dikirim 1
+                        kali per akun.
+                      </p>
                     </div>
                   </div>
-                  <div className="flex flex-wrap gap-2 self-stretch sm:self-auto justify-end">
-                    <motion.button
-                      type="button"
-                      whileHover={{ scale: 1.04 }}
-                      whileTap={{ scale: 0.96 }}
-                      onClick={() =>
-                        alert("Pembahasan kuis dibuka. Fitur pembahasan aktif setelah integrasi backend.")
-                      }
-                      className="px-4 py-1.5 bg-white text-[#0d5c52] rounded-xl text-[13px] font-semibold hover:bg-[#edf7f4] shadow-sm transition-colors flex items-center gap-1"
-                    >
-                      <Eye className="size-[18px]" />
-                      Lihat Pembahasan
-                    </motion.button>
-                    <motion.button
-                      type="button"
-                      whileHover={{ scale: 1.04 }}
-                      whileTap={{ scale: 0.96 }}
-                      onClick={() =>
-                        alert("Sertifikat Modul 04 siap diunduh. Fitur sertifikat aktif setelah integrasi backend.")
-                      }
-                      className="px-4 py-1.5 bg-[#0d5c52] text-white rounded-xl text-[13px] font-semibold hover:bg-[#00433b] shadow-sm transition-colors flex items-center gap-1"
-                    >
-                      <BadgeCheck className="size-[18px]" />
-                      Unduh Sertifikat Modul
-                    </motion.button>
-                  </div>
+                  <motion.button
+                    type="button"
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={() =>
+                      alert("Membuka Google Form kuis. Fitur integrasi aktif setelah integrasi backend.")
+                    }
+                    className="flex items-center justify-center gap-2 px-4 py-2 bg-[#0d5c52] text-white rounded-xl text-[13px] font-semibold hover:bg-[#00433b] transition-colors shadow-sm whitespace-nowrap shrink-0"
+                  >
+                    <ExternalLink className="size-[18px]" />
+                    Buka Kuis di Google Form
+                  </motion.button>
                 </div>
 
-                <div className="flex flex-col gap-1">
-                  <div className="flex justify-between items-center text-[#536360] text-[11px] font-semibold">
-                    <span>Hasil Analisis Butir Soal (19 Benar, 1 Salah dari 20 Soal)</span>
-                    <span className="text-[#0d5c52]">Akurasi 95%</span>
+                <div className="p-4 rounded-xl bg-[#d4eee7] flex flex-col gap-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                    <div className="w-16 h-16 rounded-2xl bg-[#0d5c52] text-white flex flex-col items-center justify-center shadow-md shrink-0">
+                      <span className="text-[24px] leading-7 font-bold">95</span>
+                      <span className="text-[10px] font-semibold">/ 100</span>
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-[15px] font-semibold text-[#071f1c]">
+                          Nilai Kuis Modul: 95.00
+                        </span>
+                        <span className="px-2 py-0.5 rounded-full bg-[#a6f2cf] text-[#00513a] text-[10px] font-semibold">
+                          Predikat: A+ Sempurna
+                        </span>
+                      </div>
+                      <p className="text-[12px] text-[#536360]">
+                        Dinilai &amp; Diverifikasi oleh Bpk. Arya Wiguna, M.Cs (Guru Pengampu)
+                      </p>
+                    </div>
                   </div>
-                  <div className="grid grid-cols-10 gap-1.5 p-2 bg-[#edf7f4] rounded-xl">
-                    {Array.from({ length: 20 }).map((_, i) => {
-                      const n = i + 1;
-                      const wrong = n === quizWrong;
-                      return (
-                        <motion.span
-                          key={n}
-                          title={wrong ? "Soal Salah: Kompleksitas Fibonacci Heap" : undefined}
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          whileInView={{ opacity: 1, scale: 1 }}
-                          viewport={{ once: true }}
-                          transition={{ duration: 0.25, delay: i * 0.02, ease: "easeOut" }}
-                          className={`h-6 rounded text-[11px] font-bold flex items-center justify-center ${
-                            wrong
-                              ? "bg-[#ffdad6] text-[#93000a] ring-1 ring-[#ba1a1a]"
-                              : "bg-[#a6f2cf] text-[#00513a]"
-                          }`}
-                        >
-                          {n}
-                        </motion.span>
-                      );
-                    })}
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div className="p-3 rounded-lg bg-white flex items-start gap-2">
+                      <CheckCircle2 className="size-[18px] text-[#0d5c52] shrink-0 mt-0.5" />
+                      <div>
+                        <span className="text-[12px] font-semibold text-[#071f1c]">
+                          Status Sinkronisasi Respons
+                        </span>
+                        <p className="text-[11px] text-[#536360]">
+                          Diimpor otomatis dari Google Spreadsheet Form Respons pada 18 Oktober
+                          2026, 10:45 WITA
+                        </p>
+                      </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-white flex items-start gap-2">
+                      <CheckCircle2 className="size-[18px] text-[#0d5c52] shrink-0 mt-0.5" />
+                      <div>
+                        <span className="text-[12px] font-semibold text-[#071f1c]">
+                          Hasil Butir Soal Terdapat
+                        </span>
+                        <p className="text-[11px] text-[#536360]">
+                          19 dari 20 butir soal dijawab tepat (Akurasi 95% • Kriteria Lulus Modul
+                          Terpenuhi)
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                  <div className="p-1 text-[11px] text-[#536360] flex items-center gap-1">
-                    <span className="w-2 h-2 rounded-full bg-[#ba1a1a]" />
+
+                  <div className="flex items-start gap-2 text-[11px] text-[#536360]">
+                    <Info className="size-[15px] text-[#0d5c52] shrink-0 mt-0.5" />
                     <span>
-                      Catatan Evaluasi Guru: Perkuat materi penurunan rumus time complexity
-                      worst-case O(E + V log V) pada struktur Fibonacci Heap di Soal 14.
+                      Catatan Guru: &quot;Hasil pengerjaan Google Form sangat memuaskan. Nilai sudah
+                      tervalidasi dan tercatat pada Rapor Kurikulum Merdeka.&quot;
                     </span>
                   </div>
                 </div>
