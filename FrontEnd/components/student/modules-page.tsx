@@ -3,7 +3,10 @@
 import { useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
+import { modulesApi } from "@/lib/api/client";
 import {
   ArrowDownUp,
   Atom,
@@ -226,11 +229,53 @@ function barClass(m: Module) {
 
 export function StudentModules() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [subject, setSubject] = useState<"all" | SubjectKey>("all");
   const [status, setStatus] = useState<StatusFilter>("all");
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<"newest" | "oldest">("newest");
   const [view, setView] = useState<"grid" | "list">("grid");
+  const [openingModule, setOpeningModule] = useState<string | null>(null);
+
+  async function openModule(module: Module) {
+    if (module.id !== "algo-big-o") {
+      toast.info(
+        `Modul "${module.title}" dibuka. Fitur pembelajaran aktif setelah integrasi backend.`
+      );
+      return;
+    }
+    if (openingModule) return;
+
+    setOpeningModule(module.id);
+    try {
+      const result = await queryClient.fetchQuery({
+        queryKey: ["modules"],
+        queryFn: () => modulesApi.list(),
+        staleTime: 0,
+      });
+      if (result.error) {
+        toast.error(
+          result.error.message || result.error.error || "Gagal memuat modul."
+        );
+        return;
+      }
+      const backendModules = result.data?.data ?? [];
+      const target =
+        backendModules.find((item) => item.title === module.title) ??
+        backendModules.find((item) => item.title.includes("Algoritma")) ??
+        backendModules[0];
+
+      if (!target) {
+        toast.error("Modul belum tersedia di server.");
+        return;
+      }
+      router.push(`/student/modules/${target.id}`);
+    } catch {
+      toast.error("Gagal memuat daftar modul.");
+    } finally {
+      setOpeningModule(null);
+    }
+  }
 
   const visibleModules = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -627,16 +672,9 @@ export function StudentModules() {
                       <motion.button
                         type="button"
                         whileTap={{ scale: 0.98 }}
-                        onClick={() => {
-                          if (m.id === "algo-big-o") {
-                            router.push("/student/modules/algoritma-pemrograman-optimasi-big-o");
-                            return;
-                          }
-                          alert(
-                            `Modul "${m.title}" dibuka. Fitur pembelajaran aktif setelah integrasi backend.`
-                          );
-                        }}
-                        className={`flex flex-1 items-center justify-center gap-1 rounded-lg px-3 py-2 text-[14px] font-semibold leading-5 transition-colors ${
+                        onClick={() => void openModule(m)}
+                        disabled={openingModule === m.id}
+                        className={`flex flex-1 items-center justify-center gap-1 rounded-lg px-3 py-2 text-[14px] font-semibold leading-5 transition-colors disabled:cursor-wait disabled:opacity-70 ${
                           m.status === "new"
                             ? "bg-[#0d5c52] text-white hover:bg-[#004d40]"
                             : "bg-[#d4eee7] text-[#0d5c52] hover:bg-[#cee8e1]"

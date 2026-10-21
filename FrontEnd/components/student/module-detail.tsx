@@ -1,6 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import {
   AlarmClock,
   BookOpen,
@@ -18,7 +22,6 @@ import {
   Info,
   Lock,
   MapPin,
-  MessagesSquare,
   Play,
   Presentation,
   QrCode,
@@ -35,6 +38,8 @@ import {
   StaggerChildren,
   StaggerItem,
 } from "@/components/ui/animations";
+import { ModuleForum } from "@/components/student/module-forum";
+import { modulesApi } from "@/lib/api/client";
 
 type TabKey = "presensi" | "materi" | "tugas" | "kuis";
 
@@ -106,15 +111,78 @@ function CompletionGauge() {
   );
 }
 
-export function StudentModuleDetail() {
+export function StudentModuleDetail({ moduleId }: { moduleId: string }) {
   const [tab, setTab] = useState<TabKey>("kuis");
-  const [question, setQuestion] = useState("");
+  const router = useRouter();
 
-  function sendQuestion() {
-    if (!question.trim()) return;
-    alert(`Pertanyaan terkirim ke forum: "${question.trim()}"`);
-    setQuestion("");
+  const moduleQuery = useQuery({
+    queryKey: ["module", moduleId],
+    queryFn: async () => {
+      const result = await modulesApi.get(moduleId);
+      if (result.error) {
+        const error = new Error(
+          result.error.message || result.error.error || "Gagal memuat modul"
+        ) as Error & { status?: number };
+        error.status = result.status;
+        throw error;
+      }
+      return result.data?.data ?? null;
+    },
+  });
+
+  const moduleStatus = (
+    moduleQuery.error as (Error & { status?: number }) | null
+  )?.status;
+
+  useEffect(() => {
+    if (moduleStatus !== 401) return;
+    toast.error("Sesi berakhir. Silakan login kembali.");
+    router.push("/auth/login");
+  }, [moduleStatus, router]);
+
+  if (moduleQuery.isError && moduleStatus !== 401) {
+    return (
+      <FadeIn className="w-full">
+        <div className="flex flex-col items-start gap-3 rounded-2xl border border-[#cee8e1]/60 bg-white p-6 shadow-[0_2px_8px_-2px_rgba(13,92,82,0.05)]">
+          <h1 className="text-[22px] font-bold text-[#071f1c]">
+            {moduleStatus === 404
+              ? "Modul tidak ditemukan"
+              : "Gagal memuat modul"}
+          </h1>
+          <p className="text-[13px] text-[#536360]">
+            {moduleStatus === 404
+              ? "Modul yang Anda cari tidak tersedia atau sudah dihapus."
+              : "Terjadi kesalahan saat mengambil data modul."}
+          </p>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => moduleQuery.refetch()}
+              className="rounded-lg bg-[#d4eee7] px-3 py-2 text-[12px] font-semibold text-[#0d5c52] hover:bg-[#cee8e1]"
+            >
+              Coba lagi
+            </button>
+            <Link
+              href="/student/modules"
+              className="rounded-lg bg-[#0d5c52] px-3 py-2 text-[12px] font-semibold text-white hover:bg-[#004d40]"
+            >
+              Kembali ke daftar modul
+            </Link>
+          </div>
+        </div>
+      </FadeIn>
+    );
   }
+
+  const moduleData = moduleQuery.data;
+  const teacherName = moduleData?.teacher_name ?? "Bpk. Arya Wiguna, M.Cs";
+  const teacherInitials = teacherName
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase();
 
   return (
     <FadeIn className="w-full">
@@ -122,16 +190,18 @@ export function StudentModuleDetail() {
         {/* Breadcrumb & Top Controls */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
           <nav className="flex items-center gap-1.5 text-[13px] font-semibold text-[#536360] overflow-x-auto whitespace-nowrap py-1">
-            <a href="/student/dashboard" className="hover:text-[#0d5c52] transition-colors flex items-center gap-1">
+            <Link href="/student/dashboard" className="hover:text-[#0d5c52] transition-colors flex items-center gap-1">
               <Home className="size-4" />
               Dashboard
-            </a>
+            </Link>
             <ChevronRight className="size-3.5 text-[#bec9c5]" />
-            <a href="/student/modules" className="hover:text-[#0d5c52] transition-colors">
+            <Link href="/student/modules" className="hover:text-[#0d5c52] transition-colors">
               Modules
-            </a>
+            </Link>
             <ChevronRight className="size-3.5 text-[#bec9c5]" />
-            <span className="text-[#0d5c52]">Informatika &amp; Sains Komputasi</span>
+            <span className="text-[#0d5c52]">
+              {moduleData?.subject_name ?? "Informatika & Sains Komputasi"}
+            </span>
           </nav>
         </div>
 
@@ -153,17 +223,16 @@ export function StudentModuleDetail() {
                 </span>
               </div>
               <h2 className="text-[30px] leading-[38px] font-bold text-[#071f1c] tracking-tight mt-1">
-                Informatika &amp; Sains Komputasi
+                {moduleData?.title ?? "Informatika & Sains Komputasi"}
               </h2>
               <p className="text-[14px] leading-relaxed text-[#3f4946] max-w-2xl">
-                Eksplorasi representasi adjacency matrix, relaksasi simpul berbasis antrean
-                prioritas (Priority Queue), serta pemetaan rute latensi minimum pada topologi
-                backbone jaringan kampus SMK Mataram.
+                {moduleData?.description ??
+                  "Eksplorasi representasi adjacency matrix, relaksasi simpul berbasis antrean prioritas (Priority Queue), serta pemetaan rute latensi minimum pada topologi backbone jaringan kampus SMK Mataram."}
               </p>
               <div className="flex items-center gap-4 pt-1 mt-1">
                 <div className="relative">
                   <div className="w-11 h-11 rounded-full bg-[#0d5c52] text-white flex items-center justify-center text-[15px] font-semibold shadow-sm">
-                    AW
+                    {teacherInitials || "AW"}
                   </div>
                   <span
                     className="absolute bottom-0 right-0 w-3 h-3 bg-[#14b8a6] rounded-full ring-2 ring-white"
@@ -173,7 +242,7 @@ export function StudentModuleDetail() {
                 <div className="flex flex-col">
                   <div className="flex items-center gap-1.5">
                     <span className="text-[14px] font-semibold text-[#071f1c]">
-                      Bpk. Arya Wiguna, M.Cs
+                      {teacherName}
                     </span>
                     <span className="px-1.5 py-0.5 rounded bg-[#abf0e2] text-[#0d5c52] text-[10px] font-semibold">
                       Guru Pengampu
@@ -853,83 +922,7 @@ export function StudentModuleDetail() {
           {/* Right */}
           <SlideIn direction="right" delay={0.1} className="lg:col-span-4 flex flex-col gap-6">
             {/* Forum */}
-            <div className="bg-white p-4 rounded-2xl shadow-[0_2px_8px_-2px_rgba(13,92,82,0.05)] border border-[#cee8e1]/60 flex flex-col gap-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <MessagesSquare className="size-[22px] text-[#0d5c52]" />
-                  <h3 className="text-[15px] leading-[22px] font-semibold text-[#071f1c]">
-                    Forum Diskusi Modul
-                  </h3>
-                </div>
-                <span className="px-2 py-0.5 rounded-full bg-[#d4eee7] text-[#0d5c52] text-[11px] font-semibold">
-                  3 Pertanyaan
-                </span>
-              </div>
-
-              <StaggerChildren staggerDelay={0.1} className="flex flex-col gap-2">
-                <StaggerItem>
-                <div className="p-2 rounded-xl bg-[#edf7f4] flex flex-col gap-1.5">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-semibold text-[#071f1c]">Sarah Azzahra</span>
-                    <span className="text-[10px] text-[#536360]">2 jam lalu</span>
-                  </div>
-                  <p className="text-[12px] text-[#071f1c] leading-snug">
-                    &quot;Pak, apakah bobot edge latensi boleh bernilai 0 jika antar switch
-                    terhubung direct fiber optic?&quot;
-                  </p>
-                  <div className="mt-1 p-2 rounded-lg bg-[#cee8e1] flex items-start gap-2">
-                    <span className="text-[10px] font-bold text-[#0d5c52] uppercase mt-0.5">
-                      Guru:
-                    </span>
-                    <span className="text-[12px] text-[#536360]">
-                      &quot;Bisa Sarah, namun disarankan diberi bobot minimum 1ms untuk mencegah
-                      infinite tie-loop.&quot;
-                    </span>
-                  </div>
-                </div>
-                </StaggerItem>
-                <StaggerItem>
-                <div className="p-2 rounded-xl bg-[#edf7f4] flex flex-col gap-1.5">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-semibold text-[#071f1c]">Danu Ramadhan</span>
-                    <span className="text-[10px] text-[#536360]">Kemarin</span>
-                  </div>
-                  <p className="text-[12px] text-[#071f1c] leading-snug">
-                    &quot;Apakah library NetworkX boleh digunakan untuk visualisasi matplotlib di
-                    tugas lab?&quot;
-                  </p>
-                  <div className="mt-1 p-2 rounded-lg bg-[#cee8e1] flex items-start gap-2">
-                    <span className="text-[10px] font-bold text-[#0d5c52] uppercase mt-0.5">
-                      Guru:
-                    </span>
-                    <span className="text-[12px] text-[#536360]">
-                      &quot;Sangat dianjurkan Danu! Lihat referensi Bab 3 video demonstrasi.&quot;
-                    </span>
-                  </div>
-                </div>
-                </StaggerItem>
-              </StaggerChildren>
-
-              <div className="relative flex items-center pt-1">
-                <input
-                  value={question}
-                  onChange={(e) => setQuestion(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && sendQuestion()}
-                  placeholder="Tulis pertanyaan ke guru / forum..."
-                  type="text"
-                  className="w-full h-10 pl-3 pr-10 rounded-xl bg-[#edf7f4] text-[12px] text-[#071f1c] placeholder:text-[#536360] outline-none focus:bg-white focus:ring-1 focus:ring-[#0d5c52] transition-all"
-                />
-                <motion.button
-                  type="button"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={sendQuestion}
-                  className="absolute right-2 text-[#0d5c52] hover:text-[#00433b] p-1 rounded-lg"
-                >
-                  <Send className="size-[18px]" />
-                </motion.button>
-              </div>
-            </div>
+            <ModuleForum moduleId={moduleId} />
 
             {/* Next Module (Locked) */}
             <motion.div
