@@ -248,9 +248,9 @@ export function StudentModules() {
 
   return (
     <FadeIn className="w-full">
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-8" style={inter}>
+      <div className="flex w-full flex-col gap-6" style={inter}>
         {/* Header */}
-        <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
+        <div className="flex flex-col gap-4">
           <div className="flex max-w-3xl flex-col gap-1">
             <nav className="flex items-center gap-1 text-[13px] font-semibold leading-[18px] text-[#3f4946]">
               <a
