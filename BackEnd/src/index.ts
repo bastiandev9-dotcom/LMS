@@ -7,6 +7,7 @@ import { authRoute } from "./routes/auth-route";
 import { adminUsersRoute } from "./routes/admin-users-route";
 import { subjectsRoute } from "./routes/subjects-route";
 import { modulesRoute } from "./routes/modules-route";
+import { discussionsRoute } from "./routes/discussions-route";
 import { lessonsRoute } from "./routes/lessons-route";
 import { enrollmentsRoute } from "./routes/enrollments-route";
 import { reviewsRoute } from "./routes/reviews";
@@ -106,6 +107,7 @@ const app = new Elysia()
   .use(adminUsersRoute)
   .use(subjectsRoute)
   .use(modulesRoute)
+  .use(discussionsRoute)
   .use(lessonsRoute)
   .use(enrollmentsRoute)
   .use(reviewsRoute)
