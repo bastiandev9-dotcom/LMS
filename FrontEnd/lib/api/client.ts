@@ -8,7 +8,6 @@
  */
 
 import type {
-  RegisterRequest,
   LoginRequest,
   LoginResponse,
   ChangePasswordRequest,
@@ -63,13 +62,6 @@ export const api = {
     /** POST /api/auth/login — BFF yang men-set cookie HttpOnly */
     login: (body: LoginRequest) =>
       apiFetch<LoginResponse>("/api/auth/login", {
-        method: "POST",
-        body: JSON.stringify(body),
-      }),
-
-    /** POST /api/v1/auth/register — registrasi siswa (link aktivasi via email) */
-    register: (body: RegisterRequest) =>
-      apiFetch<ApiMessage>("/api/v1/auth/register", {
         method: "POST",
         body: JSON.stringify(body),
       }),
