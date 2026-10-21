@@ -6,19 +6,15 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   ArrowDownUp,
-  ArrowRight,
   Atom,
-  BadgeCheck,
   BookOpen,
   CheckCircle2,
   ChevronDown,
-  Clock,
   Code,
   Download,
   Eye,
   FileText,
   FolderOpen,
-  GraduationCap,
   Home,
   Layers,
   LayoutGrid,
@@ -26,13 +22,11 @@ import {
   List,
   Mic,
   Palette,
-  Paperclip,
   Play,
   PlayCircle,
   Presentation,
   Search,
   SearchX,
-  ShieldCheck,
   Sigma,
   Users,
   Video,
@@ -207,50 +201,6 @@ const modules: Module[] = [
     status: "in_progress",
     action: "Buka Modul",
     actionIcon: PlayCircle,
-  },
-];
-
-type SyllabusDoc = {
-  type: string;
-  typeClass: string;
-  title: string;
-  meta: string;
-  level: string;
-  author: string;
-  verified: string;
-  VerifiedIcon: typeof BadgeCheck;
-};
-
-const syllabusDocs: SyllabusDoc[] = [
-  {
-    type: "PDF",
-    typeClass: "bg-[#ffdad6] text-[#93000a]",
-    title: "Silabus ATP & CP Informatika Tingkat Lanjut",
-    meta: "SMK-MATARAM-CP-INF-2024.pdf • 1.8 MB",
-    level: "Fase F (Kelas XII)",
-    author: "Tim Kurikulum Informatika",
-    verified: "Disahkan Waka Kurikulum",
-    VerifiedIcon: CheckCircle2,
-  },
-  {
-    type: "PDF",
-    typeClass: "bg-[#ccfbf1] text-[#004d40]",
-    title: "Panduan Praktik Laboratorium Sains & Robotika Terapan",
-    meta: "SMK-MATARAM-LAB-FIS-ROB.pdf • 3.2 MB",
-    level: "Fase F (Kelas XI & XII)",
-    author: "Laboratorium Fisika Modern",
-    verified: "Disahkan Waka Kurikulum",
-    VerifiedIcon: CheckCircle2,
-  },
-  {
-    type: "DOCX",
-    typeClass: "bg-[#cee8e1] text-[#0d5c52]",
-    title: "Rubrik Penilaian Proyek Ujian Kompetensi Keahlian (UKK) DKV",
-    meta: "RUBRIK-UKK-DKV-FINAL.docx • 890 KB",
-    level: "Fase F Kejuruan",
-    author: "Asosiasi Industri DKV Mataram",
-    verified: "Standar BNSP",
-    VerifiedIcon: BadgeCheck,
   },
 ];
 
@@ -479,78 +429,6 @@ export function StudentModules() {
             </div>
           </StaggerItem>
         </StaggerChildren>
-
-        {/* Featured Active Module */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0d5c52] via-[#0d5c52] to-[#004d40] p-6 text-white shadow-lg">
-          <div className="pointer-events-none absolute -right-20 -top-20 size-96 rounded-full bg-[#abf0e2]/10 blur-3xl" />
-          <div className="pointer-events-none absolute bottom-0 right-1/3 size-64 rounded-full bg-[#71f8e4]/10 blur-2xl" />
-          <div className="relative z-10 flex flex-col justify-between gap-6 lg:flex-row lg:items-center">
-            <div className="flex max-w-2xl flex-col gap-2">
-              <div className="flex flex-wrap items-center gap-1">
-                <span className="flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-[11px] font-semibold uppercase leading-[14px] tracking-[0.04em] text-[#abf0e2] backdrop-blur-md">
-                  <span className="size-2 animate-pulse rounded-full bg-[#14b8a6]" />
-                  Sedang Dipelajari Minggu Ini
-                </span>
-                <span className="rounded-full bg-white/10 px-2.5 py-0.5 text-[11px] font-semibold leading-[14px] text-white">
-                  Informatika &amp; Sains Komputasi
-                </span>
-              </div>
-              <h2
-                className="text-[26px] font-bold leading-[34px] tracking-tight text-white"
-                style={jakarta}
-              >
-                Advanced Graph Algorithms &amp; Applied Quantum Physics
-              </h2>
-              <p className="text-[14px] leading-5 text-[#8fd3c6]">
-                Bab 4: Implementasi Algoritma Dijkstra, Shortest Path Optimization, &amp; Analisis
-                Komputasi Jaringan.
-              </p>
-              <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] leading-[18px] text-[#abf0e2]">
-                <span className="flex items-center gap-1">
-                  <GraduationCap className="size-4" />
-                  Dr. Pawell Bennett, S.Kom &amp; Mrs. Sarah V.
-                </span>
-                <span className="opacity-50">•</span>
-                <span className="flex items-center gap-1">
-                  <Clock className="size-4" />
-                  Est. Waktu Membaca: ~35 Menit
-                </span>
-                <span className="opacity-50">•</span>
-                <span className="flex items-center gap-1">
-                  <Paperclip className="size-4" />
-                  4.2 MB PDF Lengkap
-                </span>
-              </div>
-              <div className="mt-2 max-w-md">
-                <div className="mb-1.5 flex justify-between text-[11px] font-semibold leading-[14px] text-[#abf0e2]">
-                  <span>Progres Sesi Bab 4</span>
-                  <span className="font-bold text-white">75% Selesai (Sisa 1 Praktikum)</span>
-                </div>
-                <div className="h-2 w-full overflow-hidden rounded-full bg-[#00433b]/60">
-                  <div className="h-full w-3/4 rounded-full bg-gradient-to-r from-[#8fd3c6] to-[#abf0e2]" />
-                </div>
-              </div>
-            </div>
-            <div className="flex min-w-[220px] flex-col gap-2 sm:flex-row lg:flex-col">
-              <button
-                type="button"
-                onClick={() => router.push("/student/modules/algoritma-pemrograman-optimasi-big-o")}
-                className="group flex items-center justify-center gap-1 rounded-xl bg-white px-6 py-3 text-[15px] font-semibold leading-[22px] text-[#0d5c52] shadow-md transition-colors duration-200 hover:bg-[#abf0e2]"
-              >
-                Lanjutkan Belajar
-                <ArrowRight className="size-5 transition-transform group-hover:translate-x-1" />
-              </button>
-              <button
-                type="button"
-                onClick={() => alert("Unduhan PDF modul aktif setelah integrasi storage backend.")}
-                className="flex items-center justify-center gap-1 rounded-xl bg-white/10 px-4 py-2.5 text-[14px] font-semibold leading-5 text-white backdrop-blur-md transition-colors duration-200 hover:bg-white/20"
-              >
-                <Download className="size-[18px]" />
-                Unduh PDF Modul Lengkap
-              </button>
-            </div>
-          </div>
-        </div>
 
         {/* Filter Toolbar */}
         <div className="flex flex-col gap-4">
@@ -785,97 +663,6 @@ export function StudentModules() {
             })}
           </StaggerChildren>
         )}
-
-        {/* Syllabus & Curriculum Documents */}
-        <div className="flex flex-col gap-4 rounded-2xl bg-white p-6 shadow-[0_2px_8px_-2px_rgba(13,92,82,0.05)]">
-          <div className="flex flex-col justify-between gap-2 border-b border-[#cee8e1] pb-2 sm:flex-row sm:items-center">
-            <div className="flex items-center gap-2">
-              <div className="flex size-10 items-center justify-center rounded-xl bg-[#d4eee7] text-[#0d5c52]">
-                <ShieldCheck className="size-[22px]" />
-              </div>
-              <div>
-                <h2
-                  className="text-[15px] font-bold leading-[22px] text-[#071f1c]"
-                  style={jakarta}
-                >
-                  Daftar Silabus &amp; Dokumen Kurikulum Resmi
-                </h2>
-                <p className="text-[12px] leading-[18px] text-[#3f4946]">
-                  Capaian Pembelajaran (CP), Alur Tujuan Pembelajaran (ATP), dan Panduan Standar
-                  Kelulusan Kejuruan.
-                </p>
-              </div>
-            </div>
-            <span className="self-start rounded-full bg-[#edf7f4] px-3 py-1 text-[11px] font-semibold leading-[14px] text-[#3f4946] sm:self-auto">
-              Tahun Ajaran 2024 / 2025
-            </span>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[760px] text-left text-[12px] leading-[18px]">
-              <thead>
-                <tr className="border-b border-[#d4eee7] text-[11px] font-semibold uppercase tracking-[0.02em] text-[#3f4946]">
-                  <th className="px-4 py-3 font-semibold">Nama Dokumen &amp; Mata Pelajaran</th>
-                  <th className="px-4 py-3 font-semibold">Tingkat / Fase</th>
-                  <th className="px-4 py-3 font-semibold">Penyusun / Guru Pembina</th>
-                  <th className="px-4 py-3 font-semibold">Status Verifikasi</th>
-                  <th className="px-4 py-3 text-right font-semibold">Aksi Unduh</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#edf7f4]">
-                {syllabusDocs.map((doc) => {
-                  const TypeIcon = doc.VerifiedIcon;
-                  return (
-                    <tr
-                      key={doc.meta}
-                      className="transition-colors hover:bg-[#edf7f4]/50"
-                    >
-                      <td className="px-4 py-3.5">
-                        <div className="flex items-center gap-3">
-                          <span
-                            className={`flex size-8 items-center justify-center rounded-lg text-[11px] font-bold leading-[14px] ${doc.typeClass}`}
-                          >
-                            {doc.type}
-                          </span>
-                          <div className="flex flex-col">
-                            <span className="text-[15px] font-semibold leading-[22px] text-[#071f1c]">
-                              {doc.title}
-                            </span>
-                            <span className="text-[12px] leading-[18px] text-[#3f4946]">
-                              {doc.meta}
-                            </span>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-4 py-3.5 text-[13px] font-semibold leading-[18px] text-[#071f1c]">
-                        {doc.level}
-                      </td>
-                      <td className="px-4 py-3.5 text-[#3f4946]">{doc.author}</td>
-                      <td className="px-4 py-3.5">
-                        <span className="inline-flex items-center gap-1 rounded-full bg-[#a6f2cf] px-2.5 py-0.5 text-[11px] font-semibold leading-[14px] text-[#002115]">
-                          <TypeIcon className="size-[13px]" />
-                          {doc.verified}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3.5 text-right">
-                        <button
-                          type="button"
-                          onClick={() =>
-                            alert(`Unduhan "${doc.title}" aktif setelah integrasi storage backend.`)
-                          }
-                          className="inline-flex items-center gap-1 rounded-lg bg-[#e2f2ee] px-3 py-1.5 text-[13px] font-semibold leading-[18px] text-[#0d5c52] transition-colors hover:bg-[#d4eee7]"
-                        >
-                          <Download className="size-4" />
-                          Unduh (.{doc.type})
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
       </div>
     </FadeIn>
   );
