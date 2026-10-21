@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-
-const TOKEN_COOKIE = "lms_token";
+import { TOKEN_COOKIE } from "@/lib/auth/cookie";
 
 interface ProtectedArea {
   prefix: string;
