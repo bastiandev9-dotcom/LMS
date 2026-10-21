@@ -30,16 +30,16 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000";
 
 async function apiFetch<T>(
   path: string,
-  options: RequestInit = {}
+  { headers, ...options }: RequestInit = {}
 ): Promise<{ data: T | null; error: ApiError | null; status: number }> {
   const url = `${BASE_URL}${path}`;
 
   const res = await fetch(url, {
+    ...options,
     headers: {
       "Content-Type": "application/json",
-      ...(options.headers ?? {}),
+      ...(headers ?? {}),
     },
-    ...options,
   });
 
   let body: unknown;
