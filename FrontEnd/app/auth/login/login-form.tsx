@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { ArrowRight, Eye, EyeOff, Lock, UserPlus } from "lucide-react";
 import { StaggerChildren, StaggerItem } from "@/components/ui/animations";
-import { api, authApi } from "@/lib/api/client";
+import { api } from "@/lib/api/client";
 import { useAuthStore } from "@/lib/store/auth-store";
 
 function homeSegment(role: string) {
@@ -45,24 +45,13 @@ export function LoginForm() {
       }
 
       if (!data?.data) {
-        toast.error("Token tidak diterima dari server");
+        toast.error("Data pengguna tidak diterima dari server");
         setLoading(false);
         return;
       }
 
-      const token = data.data;
-
-      const { data: currentData, error: currentError } =
-        await authApi(token).users.current.get();
-
-      if (currentError || !currentData?.data) {
-        toast.error("Gagal mengambil data pengguna");
-        setLoading(false);
-        return;
-      }
-
-      const user = currentData.data;
-      useAuthStore.getState().setAuth(token, user);
+      const user = data.data;
+      useAuthStore.getState().setUser(user);
 
       // Akun dengan password awal wajib mengganti password sebelum
       // mengakses fitur lain (dijaga juga di backend).
