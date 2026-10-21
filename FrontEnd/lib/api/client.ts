@@ -8,9 +8,13 @@
  */
 
 import type {
+  BackendModule,
+  ChangePasswordRequest,
+  CreateDiscussionRequest,
+  Discussion,
+  DiscussionReply,
   LoginRequest,
   LoginResponse,
-  ChangePasswordRequest,
   ApiSuccess,
   ApiMessage,
   ApiError,
@@ -90,6 +94,47 @@ export const api = {
 } as const;
 
 // ─── Authenticated API (cookie HttpOnly) ─────────────────────────────────────
+
+export const modulesApi = {
+  /** GET /api/v1/modules — daftar modul dari backend */
+  list: () => apiFetch<ApiSuccess<BackendModule[]>>("/api/v1/modules"),
+
+  /** GET /api/v1/modules/:id — detail modul */
+  get: (moduleId: string) =>
+    apiFetch<ApiSuccess<BackendModule>>(`/api/v1/modules/${moduleId}`),
+} as const;
+
+export const discussionsApi = {
+  /** GET /api/v1/modules/:moduleId/discussions */
+  list: (moduleId: string) =>
+    apiFetch<ApiSuccess<Discussion[]>>(
+      `/api/v1/modules/${moduleId}/discussions`
+    ),
+
+  /** POST /api/v1/modules/:moduleId/discussions */
+  create: (moduleId: string, body: CreateDiscussionRequest) =>
+    apiFetch<ApiSuccess<Discussion>>(
+      `/api/v1/modules/${moduleId}/discussions`,
+      {
+        method: "POST",
+        body: JSON.stringify(body),
+      }
+    ),
+
+  /** POST /api/v1/modules/:moduleId/discussions/:discussionId/replies */
+  reply: (
+    moduleId: string,
+    discussionId: string,
+    body: CreateDiscussionRequest
+  ) =>
+    apiFetch<ApiSuccess<DiscussionReply>>(
+      `/api/v1/modules/${moduleId}/discussions/${discussionId}/replies`,
+      {
+        method: "POST",
+        body: JSON.stringify(body),
+      }
+    ),
+} as const;
 
 export const authApi = {
   auth: {

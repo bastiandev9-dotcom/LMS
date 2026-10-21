@@ -177,10 +177,23 @@ Kalau DBeaver masih hanya menampilkan satu database, aktifkan opsi **Show all da
 |---|---|---|---|
 | `POST` | `/api/v1/modules` | admin, guru | Buat modul |
 | `GET` | `/api/v1/modules` | semua | List modul (filter `?subject_id=`) |
-| `PUT` | `/api/v1/modules/:id` | admin, guru pemilik | Update modul |
-| `DELETE` | `/api/v1/modules/:id` | admin, guru pemilik | Hapus modul |
+| `GET` | `/api/v1/modules/:moduleId` | semua | Detail modul + subject & guru |
+| `PUT` | `/api/v1/modules/:moduleId` | admin, guru pemilik | Update modul |
+| `DELETE` | `/api/v1/modules/:moduleId` | admin, guru pemilik | Hapus modul |
+
+### Discussions - `/api/v1/modules/:moduleId/discussions`
+
+| Method | Endpoint | Auth | Keterangan |
+|---|---|---|---|
+| `GET` | `/api/v1/modules/:moduleId/discussions` | siswa enrolled, guru pemilik, admin | List pertanyaan + balasan |
+| `POST` | `/api/v1/modules/:moduleId/discussions` | siswa enrolled | Buat pertanyaan (maks. 2000 karakter) |
+| `POST` | `/api/v1/modules/:moduleId/discussions/:discussionId/replies` | guru pemilik, admin | Balas pertanyaan |
 
 > Role yang tersedia: `admin` \| `guru` \| `siswa`
+
+Data seed development menyertakan subject **Informatika & Sains Komputasi**, modul
+**Algoritma Pemrograman & Optimasi Big-O**, enrollment `siswa4@simanis.com`, dan dua
+diskusi contoh beserta balasan guru.
 
 ---
 
