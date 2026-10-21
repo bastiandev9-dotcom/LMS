@@ -42,7 +42,7 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  data: string; // Bearer token
+  data: User;
   must_change_password?: boolean;
   success?: boolean;
   message?: string;
