@@ -15,12 +15,10 @@ const PROTECTED_AREAS: readonly ProtectedArea[] = [
 
 const AUTH_PAGES = [
   "/auth/login",
-  "/auth/register",
   "/auth/activate",
   "/auth/forgot-password",
   "/auth/reset-password",
   "/login",
-  "/register",
 ];
 
 const ROLE_HOME: Record<string, string> = {
@@ -111,7 +109,7 @@ export function middleware(req: NextRequest) {
     }
   }
 
-  // Authenticated user hitting login/register -> their dashboard.
+  // Authenticated user hitting login -> their dashboard.
   if (session && AUTH_PAGES.includes(pathname)) {
     const home = ROLE_HOME[session.role] ?? "/student/dashboard";
     const url = req.nextUrl.clone();
