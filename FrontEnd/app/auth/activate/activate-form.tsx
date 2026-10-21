@@ -85,10 +85,10 @@ export function ActivateForm({ token }: ActivateFormProps) {
         </Link>
 
         <Link
-          href="/auth/register"
+          href="/auth/login"
           className="w-full text-center text-xs font-semibold text-slate-500 hover:text-slate-700 transition"
         >
-          Kembali ke halaman pendaftaran
+          Kembali ke halaman masuk
         </Link>
       </div>
     );

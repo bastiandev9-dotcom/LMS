@@ -139,12 +139,6 @@ export function ForgotPasswordForm() {
             Masuk di sini
           </Link>
         </p>
-        <p className="text-xs text-slate-600">
-          Belum punya akun?{" "}
-          <Link href="/auth/register" className="font-bold text-indigo-600 hover:underline">
-            Daftar sebagai siswa
-          </Link>
-        </p>
       </div>
     </form>
   );

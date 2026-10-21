@@ -25,16 +25,6 @@ export interface User {
 
 // ─── Request / Response shapes ───────────────────────────────────────────────
 
-/**
- * Registrasi mandiri hanya untuk siswa dan harus cocok dengan roster
- * yang diimpor admin (nomor induk + tanggal lahir).
- */
-export interface RegisterRequest {
-  email: string;
-  nomor_induk: string;
-  tanggal_lahir: string; // YYYY-MM-DD
-}
-
 /** `identifier` = email terdaftar atau nomor induk (NIS/NIP). */
 export interface LoginRequest {
   identifier: string;
